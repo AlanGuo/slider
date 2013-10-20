@@ -24,7 +24,9 @@ slider
 			<li><img src="imgs/home-slide002-wachky.jpg"></li>
 			<li><img src="imgs/home-slide-sheep.jpg"></li>
 		</ul>
+		
 -js 初始化:
+
 		var ul1 = document.getElementById("ul-1");
 		var sl1 = new Slider(ul1,{mode:0});
 
