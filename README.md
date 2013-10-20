@@ -42,5 +42,5 @@ slider
 ##接口能力：
 	prev()	上一幅图
 	next()	下一幅图
-	pause()	 暂停（使用css动画的方式，次方法无效）
+	pause()	 暂停
 	play()	播放
