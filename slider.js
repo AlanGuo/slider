@@ -65,8 +65,8 @@ var Slider = (function(){
 				//3d变化
 				this._ol.style.webkitPerspective="1560px"
 				this._ol.style.webkitTransformStyle="preserve-3d";
-				this._ol.style.webkitTransform="scale(0.88)";
-				this._ol.style.overflow = "";
+				this._ol.style.webkitTransform="scale("+this._config.scale+")";
+				this._ol.style.overflow = "visible";
 			}
 
 			this._aniIn.keyframe({point:0,"-webkit-transform":"rotateX(90deg) translateZ("+tranlate+"px)"}).keyframe({
@@ -85,8 +85,8 @@ var Slider = (function(){
 				//3d变化
 				this._ol.style.webkitPerspective="1560px"
 				this._ol.style.webkitTransformStyle="preserve-3d";
-				this._ol.style.webkitTransform="scale(0.88)";
-				this._ol.style.overflow = "";
+				this._ol.style.webkitTransform="scale("+this._config.scale+")";
+				this._ol.style.overflow = "visible";
 			}
 
 			this._aniIn.keyframe({point:0,"-webkit-transform":"rotateX(-90deg) translateZ("+tranlate+"px)"}).keyframe({
@@ -148,6 +148,9 @@ var Slider = (function(){
 		config.interval = options.interval || 3000;
 		config.autoPlay = options.autoPlay || true;
 		config.timing = options.timing || "linear";
+		//透视之后缩放的比例，默认是一，
+		//一盘情况下透视之后图形会比原来要大，这里需要调整一下缩放，一般情况下此值为小于1的数入0.88
+		config.scale = options.scale || 1;
 		var origin = options.origin || {};
 		var x = origin.x || 0,y = origin.y || 0;
 		config.origin = {x:x,y:y};

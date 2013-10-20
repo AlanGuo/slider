@@ -1,0 +1,99 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="author" content="alan">
+		<title>slider 实例</title>
+		<style type="text/css">
+			body{
+				margin:0;
+			}
+			ul {
+				margin:0;
+				padding: 0;
+				overflow: hidden;
+				width:950px;
+				height:264px;
+				position: relative;
+			}
+			h2{
+				margin-top:100px;
+			}
+			ul li{
+				position:absolute;
+				list-style: none;
+			}
+		</style>
+	</head>
+	<body>
+		<h2>右->左</h2>
+		<ul id="ul-1">
+			<li><img src="imgs/browser-slide001.jpg"></li>
+			<li><img src="imgs/home-slide001.jpg"></li>
+			<li><img src="imgs/home-slide002-wachky.jpg"></li>
+			<li><img src="imgs/home-slide-sheep.jpg"></li>
+		</ul>
+		<h2>左->右</h2>
+		<ul id="ul-2">
+			<li><img src="imgs/browser-slide001.jpg"></li>
+			<li><img src="imgs/home-slide001.jpg"></li>
+			<li><img src="imgs/home-slide002-wachky.jpg"></li>
+			<li><img src="imgs/home-slide-sheep.jpg"></li>
+		</ul>
+		<h2>下->上</h2>
+		<ul id="ul-3">
+			<li><img src="imgs/browser-slide001.jpg"></li>
+			<li><img src="imgs/home-slide001.jpg"></li>
+			<li><img src="imgs/home-slide002-wachky.jpg"></li>
+			<li><img src="imgs/home-slide-sheep.jpg"></li>
+		</ul>
+		<h2>上->下</h2>
+		<ul id="ul-4">
+			<li><img src="imgs/browser-slide001.jpg"></li>
+			<li><img src="imgs/home-slide001.jpg"></li>
+			<li><img src="imgs/home-slide002-wachky.jpg"></li>
+			<li><img src="imgs/home-slide-sheep.jpg"></li>
+		</ul>
+		<h2>淡入淡出</h2>
+		<ul id="ul-5">
+			<li><img src="imgs/browser-slide001.jpg"></li>
+			<li><img src="imgs/home-slide001.jpg"></li>
+			<li><img src="imgs/home-slide002-wachky.jpg"></li>
+			<li><img src="imgs/home-slide-sheep.jpg"></li>
+		</ul>
+		<h2>3D向下翻转</h2>
+		<ul id="ul-6">
+			<li><img src="imgs/browser-slide001.jpg"></li>
+			<li><img src="imgs/home-slide001.jpg"></li>
+			<li><img src="imgs/home-slide002-wachky.jpg"></li>
+			<li><img src="imgs/home-slide-sheep.jpg"></li>
+		</ul>
+		<h2>3D向上翻转</h2>
+		<ul id="ul-7">
+			<li><img src="imgs/browser-slide001.jpg"></li>
+			<li><img src="imgs/home-slide001.jpg"></li>
+			<li><img src="imgs/home-slide002-wachky.jpg"></li>
+			<li><img src="imgs/home-slide-sheep.jpg"></li>
+		</ul>
+
+		<script type="text/javascript" src="animate1.0.js"></script>
+		<script type="text/javascript" src="slider.js"></script>
+		<script type="text/javascript">
+			var ul1 = document.getElementById("ul-1");
+			var ul2 = document.getElementById("ul-2");
+			var ul3 = document.getElementById("ul-3");
+			var ul4 = document.getElementById("ul-4");
+			var ul5 = document.getElementById("ul-5");
+			var ul6 = document.getElementById("ul-6");
+			var ul7 = document.getElementById("ul-7");
+
+			var sl1 = new Slider(ul1,{mode:0});
+			var sl2 = new Slider(ul2,{mode:1});
+			var sl3 = new Slider(ul3,{mode:2});
+			var sl4 = new Slider(ul4,{mode:3});
+			var sl5 = new Slider(ul5,{mode:4});
+			var sl6 = new Slider(ul6,{mode:5,scale:0.89});
+			var sl7 = new Slider(ul7,{mode:6,scale:0.89});
+		</script>
+	</body>
+</html>
