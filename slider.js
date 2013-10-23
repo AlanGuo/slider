@@ -109,6 +109,7 @@ var Slider = (function(){
 		5:6,
 		6:5
 	}
+	var preventConcurrent = false;
 
 	var slide = function(){
 		var func = _modeFunc[this._config.mode];
@@ -166,6 +167,9 @@ var Slider = (function(){
 	var sliderProto = slider.prototype;
 	
 	sliderProto.prev = function(){
+		if(preventConcurrent) return;
+		preventConcurrent = true;
+		
 		var mode = _oppositeMode[this._config.mode];
 		var func = _modeFunc[mode];
 		//从末尾取图片
@@ -186,6 +190,7 @@ var Slider = (function(){
 
 		var _self = this;
 		var time  = setTimeout(function(){
+			preventConcurrent = false;
 			slideOut.removeAttribute("style");
 			clearTimeout(time);
 
