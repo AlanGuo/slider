@@ -98,6 +98,10 @@ var Slider = (function(){
 			});
 		}
 	}
+	//事件
+	var _events = {
+
+	}
 	
 	//prev的动画效果
 	var _oppositeMode = {
@@ -111,31 +115,55 @@ var Slider = (function(){
 	}
 	var preventConcurrent = false;
 
-	var slide = function(){
+	var slide = function(noAnimation){
 		var func = _modeFunc[this._config.mode];
 		var slideIn = this._lis[this._lis.length-2];
 		var slideOut = this._lis[this._lis.length-1];
-
-		//首先把需要切入的图片放到右侧
-		this._aniIn.setElement(slideIn);
-		this._aniOut.setElement(slideOut);
-
-		if(!this._aniIn.keyframes.length){
-			func.call(this,slideIn,slideOut);
-		}
-
-		this._aniIn.start({timing:this._config.timing});
-		this._aniOut.start({timing:this._config.timing});
-
-		//插入到第一个
-		
 		var _self = this;
-		var time  = setTimeout(function(){
-			slideOut.removeAttribute("style");
-			_self._ol.insertBefore(slideOut,_self._lis[0]);
-			clearTimeout(time);
-		},this._config.duration);
-		
+
+		if(slideIn && slideOut){
+			//需要两个元素切换
+			//首先把需要切入的图片放到右侧
+			if(noAnimation){
+				_self._ol.insertBefore(slideOut,_self._lis[0]);
+				_self._index ++;
+				if(_self._index>_self._lis.length)
+					_self._index = 1;
+
+				if(_events["slideend"]){
+					_events["slideend"](_self._index,"next");
+				}
+			}
+			else{
+				this._aniIn.setElement(slideIn);
+				this._aniOut.setElement(slideOut);
+
+				if(!this._aniIn.keyframes.length){
+					func.call(this,slideIn,slideOut);
+				}
+
+				this._aniIn.start({timing:this._config.timing});
+				this._aniOut.start({timing:this._config.timing});
+
+				//插入到第一个
+				
+				var time  = setTimeout(function(){
+					slideOut.removeAttribute("style");
+					_self._ol.insertBefore(slideOut,_self._lis[0]);
+					clearTimeout(time);
+					_self._index ++;
+					if(_self._index>_self._lis.length)
+						_self._index = 1;
+
+					if(_events["slideend"]){
+						_events["slideend"](_self._index,"next");
+					}
+				},this._config.duration);				
+			}
+			if(_events["slidestart"]){
+				_events["slidestart"](this._index,"next");
+			}
+		}
 	}
 
 	function slider(ol, options){
@@ -143,6 +171,8 @@ var Slider = (function(){
 		//传入列表外面的ol元素
 		this._ol = ol;
 		this._lis = ol.children;
+		//图片索引
+		this._index = 1;
 		var config = {};
 		config.mode = options.mode || 0;
 		config.duration = options.duration || 400;
@@ -150,7 +180,7 @@ var Slider = (function(){
 		config.autoPlay = options.autoPlay || true;
 		config.timing = options.timing || "linear";
 		//透视之后缩放的比例，默认是一，
-		//一盘情况下透视之后图形会比原来要大，这里需要调整一下缩放，一般情况下此值为小于1的数入0.88
+		//一般情况下透视之后图形会比原来要大，这里需要调整一下缩放，一般情况下此值为小于1的数入0.88
 		config.scale = options.scale || 1;
 		var origin = options.origin || {};
 		var x = origin.x || 0,y = origin.y || 0;
@@ -166,49 +196,77 @@ var Slider = (function(){
 
 	var sliderProto = slider.prototype;
 	
-	sliderProto.prev = function(){
-		if(preventConcurrent) return;
-		preventConcurrent = true;
-		
+	sliderProto.prev = function(noAnimation){
+		var _self = this;
+
 		var mode = _oppositeMode[this._config.mode];
 		var func = _modeFunc[mode];
 		//从末尾取图片
 		var slideIn = this._lis[0];
 		var slideOut = this._lis[this._lis.length-1];
-		//加在最顶层
-		this._ol.appendChild(slideIn);
 
-		this._aniIn.setElement(slideIn);
-		this._aniOut.setElement(slideOut);
+		if(slideIn && slideOut){
+			//加在最顶层
+			this._ol.appendChild(slideIn);
+			if(noAnimation){
+				_self._index --;
+				if(_self._index<1)
+					_self._index = _self._lis.length;
 
-		this._aniIn.reset();
-		this._aniOut.reset();
-		func.call(this,slideIn,slideOut);
+				if(_events["slideend"]){
+					_events["slideend"](_self._index,"prev");
+				}
+			}
+			else{
+				if(preventConcurrent) return this;
+				preventConcurrent = true;
 
-		this._aniIn.start({timing:this._config.timing});
-		this._aniOut.start({timing:this._config.timing});
+				this._aniIn.setElement(slideIn);
+				this._aniOut.setElement(slideOut);
 
-		var _self = this;
-		var time  = setTimeout(function(){
-			preventConcurrent = false;
-			slideOut.removeAttribute("style");
-			clearTimeout(time);
+				this._aniIn.reset();
+				this._aniOut.reset();
+				func.call(this,slideIn,slideOut);
 
-			//复位动画
-			_self._aniIn.reset();
-			_self._aniOut.reset();
-			var func = _modeFunc[_self._config.mode];
-			func.call(_self,slideIn,slideOut);
+				this._aniIn.start({timing:this._config.timing});
+				this._aniOut.start({timing:this._config.timing});
 
-		},this._config.duration);
+				
+				var time  = setTimeout(function(){
+					preventConcurrent = false;
+					slideOut.removeAttribute("style");
+					clearTimeout(time);
+
+					//复位动画
+					_self._aniIn.reset();
+					_self._aniOut.reset();
+					var func = _modeFunc[_self._config.mode];
+					func.call(_self,slideIn,slideOut);
+					_self._index --;
+					if(_self._index<1)
+						_self._index = _self._lis.length;
+
+					if(_events["slideend"]){
+						_events["slideend"](_self._index,"prev");
+					}
+				},this._config.duration);
+
+			}
+			if(_events["slidestart"]){
+				_events["slidestart"](this._index,"prev");
+			}
+		}
+		return this;
 	};
 
 	sliderProto.next = function(){
 		slide.call(this);
+		return this;
 	};
 
 	sliderProto.pause = function(){
 		window.clearInterval(this._intervalKey);
+		return this;
 	};
 
 	sliderProto.play = function(){
@@ -218,6 +276,41 @@ var Slider = (function(){
 				slide.call(_self);
 			},_self._config.interval);
 		}
+		return this;
+	};
+
+	//转去指定的图片
+	sliderProto.slideTo = function(index){
+		index = index * 1;
+		var dis = index - this._index;
+		if(dis>0){
+			for(var i=0;i<dis;i++){
+				slide.call(this,true);
+			}
+		}
+		else if(dis < 0){
+			for(var i=0;i>dis;i--){
+				this.prev(true);
+			}
+		}
+		this.pause();
+		this.play();
+	};
+
+	sliderProto.on = function(event,callback){
+		if(/string/i.test(typeof event)){
+			if(/function/i.test(typeof callback)){
+				_events[event] = callback;
+			}
+			else{
+				throw new TypeError("callback must be a function");
+			}
+		}
+		else{
+			throw new TypeError("event must be string");
+		}
+		
+		return this;
 	};
 
 	return slider;
