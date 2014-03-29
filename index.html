@@ -76,7 +76,7 @@
 			<li><img src="imgs/home-slide-sheep.jpg"></li>
 		</ul>
 
-		<script type="text/javascript" src="animate-1.1.js"></script>
+		<script type="text/javascript" src="../animate/animate-1.1.js"></script>
 		<script type="text/javascript" src="slider.js"></script>
 		<script type="text/javascript">
 			var ul1 = document.getElementById("ul-1");
@@ -87,13 +87,14 @@
 			var ul6 = document.getElementById("ul-6");
 			var ul7 = document.getElementById("ul-7");
 
-			var sl1 = new Slider(ul1,{mode:0});
+			var sl1 = new Slider(ul1,{mode:0,duration:5000});
 			var sl2 = new Slider(ul2,{mode:1});
 			var sl3 = new Slider(ul3,{mode:2});
 			var sl4 = new Slider(ul4,{mode:3});
 			var sl5 = new Slider(ul5,{mode:4});
 			var sl6 = new Slider(ul6,{mode:5,scale:0.89});
 			var sl7 = new Slider(ul7,{mode:6,scale:0.89});
+			
 		</script>
 	</body>
 </html>
