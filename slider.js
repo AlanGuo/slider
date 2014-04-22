@@ -262,6 +262,7 @@ var Slider = (function() {
         this._config = config;
         this._aniOut = new window.Animate();
         this._aniIn = new window.Animate();
+        this.isPaused = false;
 
         if (config.autoPlay !== false) {
             this.play();
@@ -284,6 +285,7 @@ var Slider = (function() {
         var slideIn = this._lis[dis-1];
 
         var slideOut = this._lis[this._lis.length - 1];
+
         if (slideIn && slideOut) {
             //加在最顶层
             for(var i=0;i<slideInArray.length;i++){
@@ -339,7 +341,7 @@ var Slider = (function() {
 
             if (_self._events["slidestart"]) {
                 _self._events["slidestart"].forEach(function(func){
-                        func && func(_self._index, "prev");
+                    func && func(_self._index, "prev");
                 });
             }
         }
@@ -353,6 +355,8 @@ var Slider = (function() {
 
     sliderProto.pause = function() {
         window.clearInterval(this._intervalKey);
+        this._intervalKey = null;
+        this.isPaused = true;
         return this;
     };
 
@@ -364,26 +368,35 @@ var Slider = (function() {
                 slide.call(_self);
             }, _self._config.interval + _self._config.duration);
         }
+        this.isPaused = false;
         return this;
     };
 
     //转去指定的图片
     sliderProto.slideTo = function(index) {
-        index = index * 1;
-        var dis = index - this._index;
-        this.pause();
-        if (dis > 0) {
-            this.next(dis);
+        if(!this.isPaused){
+            index = index * 1;
+            var dis = index - this._index;
+            this.pause();
+            if (dis > 0) {
+                this.next(dis);
 
-        } else if (dis < 0) {
-            this.prev(-dis);
+            } else if (dis < 0) {
+                this.prev(-dis);
+            }
+            else{
+                //点击自己，无动作
+                this.isPaused = false;
+                return this;
+            }
+
+            var _self = this;
+            var func = function(direction){
+                _self.play().off("slideend",func);
+            }
+            this.on("slideend",func);
         }
-
-        var _self = this;
-        this.on("slideend",function(direction){
-            _self.play();
-            _self.off("slideend",arguments.callee);
-        })
+        return this;
     };
 
     sliderProto.on = function(event, callback) {
