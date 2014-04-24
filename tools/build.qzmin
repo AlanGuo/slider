@@ -1,0 +1,14 @@
+{
+	projects: [	
+			{
+				name :  "slider.js",
+				target : "../release/slider-1.0.js",
+				template:[
+				],
+				include : [
+					"../src/slider.js",
+					"../src/slider.touch.js"
+				]
+			}
+	]
+}
