@@ -9,6 +9,17 @@
 					"../src/slider.js",
 					"../src/slider.touch.js"
 				]
+			},
+			{
+				name :  "demo",
+				target : "../demo/index.js",
+				template:[
+					"../demo/src/template.html"
+				],
+				include : [
+					"../demo/src/jstemplate.js",
+					"../demo/src/index.src.js"
+				]
 			}
 	]
 }

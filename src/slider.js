@@ -1,5 +1,58 @@
 /**
- * 简单的轮播库
+ * 一个前卫，时尚的图片轮播库，提供数种炫酷的轮播效果，适用于时尚的大图轮播网站，使用html5使性能体验达到最佳，支持移动端，而且本库不依赖任何第三方库，轻便易用。
+ * @project
+ * @name Slider
+ * @subtitle v1.0
+ * @download http://115.29.195.88:82/release/slider-1.0.js
+ * @support ie,chrome,firefox,safari,opera
+ *
+ * @howto
+ *
+ * 提供一个在线的例子
+ *
+ * **livedemo**:[http://115.29.195.88:82/demo/index.html](http://115.29.195.88:82/demo/index.html)
+ *
+ * **github**：[https://github.com/AlanGuo/slider](https://github.com/AlanGuo/slider)
+ *
+ *
+ * ###html结构组组织###
+ *
+ *      ul {
+ *          ......
+ *          overflow: hidden;
+ *          width:950px;
+ *          height:264px;
+ *          position: relative;
+ *      }
+ *      ul li{
+ *          ......
+ *          position:absolute;
+ *          list-style: none;
+ *      }
+ *      <ul id="ul-1">
+ *          <li><img src="imgs/browser-slide001.jpg"></li>
+ *          <li><img src="imgs/home-slide001.jpg"></li>
+ *          <li><img src="imgs/home-slide002-wachky.jpg"></li>
+ *          <li><img src="imgs/home-slide-sheep.jpg"></li>
+ *      </ul>
+ *       
+ * ###js 初始化###
+ *
+ *       var ul1 = document.getElementById("ul-1");
+ *       var sl1 = new Slider(ul1,{mode:0});
+ *       //Slider(elem,options); 
+ *       //mode duration interval autoPlay timing scale
+ *       
+ *       mode: 动画方式  //0-从右往做, 1-从左往右, 2-从下往上，3-从上往下，4-fadeout/fadein,5-3d向上翻转，6-3d向下翻转(5,6暂时只支持webkit内核     浏览器)
+ *       duration: 动画轮播时间    //默认400ms
+ *       interval: 动画轮播间隔 //默认3000ms;
+ *       autoPlay: 是否自动播放 //默认true，初始化之后可以使用slider.play()来播放;
+ *       timing : 动画缓动，如果浏览器不支持css动画，那么此设置项无效 //默认是"linear";
+ *       scale : 缩放比例，如果使用3d透视，图形会有一些超出原来的尺寸，所以需要使用scale来微调，scale一般设置为0.89左右// 默认是1;         
+        
+ * ###触屏设备###
+ *       //支持触摸设备
+ *       sl1.touchToSlide();
  * @author alandlguo
  * @2013/10/14
  */
@@ -7,77 +60,121 @@
 var Slider = (function() {
     //direction:0-从右往左, 1-从左往右, 2-从下往上，3-从上往下，4-fadeout/fadein,5-3d向上翻转，6-3d向下翻转
     //5,6暂时只支持webkit内核浏览器
+    var vendorsCSS = 't,-webkit-t,-moz-t,-ms-t,-o-t'.split(',');
+    var judge = function(vendors) {
+        var dummyStyle = document.createElement('div').style;
+        var v = 't,webkitT,MozT,msT,OT'.split(','),
+            t,
+            i = 0,
+            l = vendors.length;
+
+        for (; i < l; i++) {
+            t = v[i] + 'ransform';
+            if (t in dummyStyle) {
+                return vendors[i].substr(0, vendors[i].length - 1);
+            }
+        }
+
+        return false;
+    }
+    var prefixCSS = function(style) {
+        var vendor = judge(vendorsCSS);
+        if (vendor === '') return style;
+        style = style.charAt(0) + style.substr(1);
+        return vendor + style;
+    }
+
     var _modeFunc = {
         0: function(slideIn, slideOut) {
-            this._aniIn.keyframe({
-                point: 0,
-                left: slideIn.clientWidth + "px"
-            }).keyframe({
+            var frameIn1 = {
+                point: 0
+            }
+            frameIn1[prefixCSS("transform")] = "translateX(" + slideIn.clientWidth + "px)";
+            var frameIn2 = {
                 point: this._config.duration,
-                left: this._config.origin.x + "px"
-            });
+            }
+            frameIn2[prefixCSS("transform")] = "translateX(" + this._config.origin.x + "px)";
+            this._aniIn.keyframe([frameIn1, frameIn2]);
 
-            this._aniOut.keyframe({
-                point: 0,
-                left: this._config.origin.x + "px"
-            }).keyframe({
+
+            var frameOut1 = {
+                point: 0
+            }
+            frameOut1[prefixCSS("transform")] = "translateX(" + this._config.origin.x + "px)";
+            var frameOut2 = {
                 point: this._config.duration,
-                left: -slideOut.clientWidth + "px"
-            });
+            }
+            frameOut2[prefixCSS("transform")] = "translateX(" + (-slideOut.clientWidth) + "px)";
+            this._aniOut.keyframe([frameOut1, frameOut2]);
         },
 
         1: function(slideIn, slideOut) {
-            this._aniIn.keyframe({
-                point: 0,
-                left: -slideIn.clientWidth + "px"
-            }).keyframe({
+            var frameIn1 = {
+                point: 0
+            }
+            frameIn1[prefixCSS("transform")] = "translateX(" + (-slideIn.clientWidth) + "px)";
+            var frameIn2 = {
                 point: this._config.duration,
-                left: this._config.origin.x + "px"
-            });
+            }
+            frameIn2[prefixCSS("transform")] = "translateX(" + this._config.origin.x + "px)";
+            this._aniIn.keyframe([frameIn1, frameIn2]);
 
-            this._aniOut.keyframe({
-                point: 0,
-                left: this._config.origin.x + "px"
-            }).keyframe({
+
+            var frameOut1 = {
+                point: 0
+            }
+            frameOut1[prefixCSS("transform")] = "translateX(" + this._config.origin.x + "px)";
+            var frameOut2 = {
                 point: this._config.duration,
-                left: slideOut.clientWidth + "px"
-            });
+            }
+            frameOut2[prefixCSS("transform")] = "translateX(" + slideOut.clientWidth + "px)";
+            this._aniOut.keyframe([frameOut1, frameOut2]);
         },
 
         2: function(slideIn, slideOut) {
-            this._aniIn.keyframe({
-                point: 0,
-                top: slideIn.clientHeight + "px"
-            }).keyframe({
+            var frameIn1 = {
+                point: 0
+            }
+            frameIn1[prefixCSS("transform")] = "translateY(" + slideIn.clientHeight + "px)";
+            var frameIn2 = {
                 point: this._config.duration,
-                top: this._config.origin.y + "px"
-            });
+            }
+            frameIn2[prefixCSS("transform")] = "translateY(" + this._config.origin.y + "px)";
+            this._aniIn.keyframe([frameIn1, frameIn2]);
 
-            this._aniOut.keyframe({
-                point: 0,
-                top: this._config.origin.y + "px"
-            }).keyframe({
+
+            var frameOut1 = {
+                point: 0
+            }
+            frameOut1[prefixCSS("transform")] = "translateY(" + this._config.origin.y + "px)";
+            var frameOut2 = {
                 point: this._config.duration,
-                top: -slideOut.clientHeight + "px"
-            });
+            }
+            frameOut2[prefixCSS("transform")] = "translateY(" + (-slideOut.clientHeight) + "px)";
+            this._aniOut.keyframe([frameOut1, frameOut2]);
         },
 
         3: function(slideIn, slideOut) {
-            this._aniIn.keyframe({
-                point: 0,
-                top: -slideIn.clientHeight + "px"
-            }).keyframe({
+            var frameIn1 = {
+                point: 0
+            }
+            frameIn1[prefixCSS("transform")] = "translateY(" + (-slideIn.clientHeight) + "px)";
+            var frameIn2 = {
                 point: this._config.duration,
-                top: this._config.origin.y + "px"
-            });
+            }
+            frameIn2[prefixCSS("transform")] = "translateY(" + this._config.origin.y + "px)";
+            this._aniIn.keyframe([frameIn1, frameIn2]);
 
-            this._aniOut.keyframe({
-                point: 0,
-                top: this._config.origin.y + "px"
-            }).keyframe({
+
+            var frameOut1 = {
+                point: 0
+            }
+            frameOut1[prefixCSS("transform")] = "translateY(" + this._config.origin.y + "px)";
+            var frameOut2 = {
                 point: this._config.duration,
-                top: slideOut.clientHeight + "px"
-            });
+            }
+            frameOut2[prefixCSS("transform")] = "translateY(" + slideOut.clientHeight + "px)";
+            this._aniOut.keyframe([frameOut1, frameOut2]);
         },
 
         4: function(slideIn, slideOut) {
@@ -109,21 +206,26 @@ var Slider = (function() {
                 this._ol.style.overflow = "visible";
             }
 
-            this._aniIn.keyframe({
-                point: 0,
-                "-webkit-transform": "rotateX(90deg) translateZ(" + tranlate + "px)"
-            }).keyframe({
+            var frameIn1 = {
+                point: 0
+            }
+            frameIn1[prefixCSS("transform")] = "rotateX(90deg) translateZ(" + tranlate + "px)";
+            var frameIn2 = {
                 point: this._config.duration,
-                "-webkit-transform": "rotateX(0deg) translateZ(" + tranlate + "px)"
-            });
+            }
+            frameIn2[prefixCSS("transform")] = "rotateX(0deg) translateZ(" + tranlate + "px)";
+            this._aniIn.keyframe([frameIn1, frameIn2]);
 
-            this._aniOut.keyframe({
-                point: 0,
-                "-webkit-transform": "rotateX(0deg) translateZ(" + tranlate + "px)"
-            }).keyframe({
+
+            var frameOut1 = {
+                point: 0
+            }
+            frameOut1[prefixCSS("transform")] = "rotateX(0deg) translateZ(" + tranlate + "px)";
+            var frameOut2 = {
                 point: this._config.duration,
-                "-webkit-transform": "rotateX(-90deg) translateZ(" + tranlate + "px)"
-            });
+            }
+            frameOut2[prefixCSS("transform")] = "rotateX(-90deg) translateZ(" + tranlate + "px)";
+            this._aniOut.keyframe([frameOut1, frameOut2]);
         },
 
         6: function(slideIn, slideOut) {
@@ -137,21 +239,26 @@ var Slider = (function() {
                 this._ol.style.overflow = "visible";
             }
 
-            this._aniIn.keyframe({
-                point: 0,
-                "-webkit-transform": "rotateX(-90deg) translateZ(" + tranlate + "px)"
-            }).keyframe({
+            var frameIn1 = {
+                point: 0
+            }
+            frameIn1[prefixCSS("transform")] = "rotateX(-90deg) translateZ(" + tranlate + "px)";
+            var frameIn2 = {
                 point: this._config.duration,
-                "-webkit-transform": "rotateX(0deg) translateZ(" + tranlate + "px)"
-            });
+            }
+            frameIn2[prefixCSS("transform")] = "rotateX(0deg) translateZ(" + tranlate + "px)";
+            this._aniIn.keyframe([frameIn1, frameIn2]);
 
-            this._aniOut.keyframe({
-                point: 0,
-                "-webkit-transform": "rotateX(0deg) translateZ(" + tranlate + "px)"
-            }).keyframe({
+
+            var frameOut1 = {
+                point: 0
+            }
+            frameOut1[prefixCSS("transform")] = "rotateX(0deg) translateZ(" + tranlate + "px)";
+            var frameOut2 = {
                 point: this._config.duration,
-                "-webkit-transform": "rotateX(90deg) translateZ(" + tranlate + "px)"
-            });
+            }
+            frameOut2[prefixCSS("transform")] = "rotateX(90deg) translateZ(" + tranlate + "px)";
+            this._aniOut.keyframe([frameOut1, frameOut2]);
         }
     }
 
@@ -186,6 +293,8 @@ var Slider = (function() {
             this._aniOut.setElement(slideOut);
 
             //设置关键帧动画
+            _self._aniIn.reset();
+            _self._aniOut.reset();
             if (!this._aniIn.keyframes.length) {
                 func.call(this, slideIn, slideOut);
             }
@@ -239,6 +348,31 @@ var Slider = (function() {
         }
     }
 
+    var setOptions = function(options) {
+        var config = {};
+        config.mode = options.mode || 0;
+        config.duration = options.duration || 500;
+        config.interval = options.interval || 4000;
+        config.autoPlay = options.autoPlay != null ? options.autoPlay : true;
+        config.timing = options.timing || "linear";
+        //透视之后缩放的比例，默认是一，
+        //一般情况下透视之后图形会比原来要大，这里需要调整一下缩放，一般情况下此值为小于1的数入0.88
+        config.scale = options.scale || 1;
+        var origin = options.origin || {};
+        var x = origin.x || 0,
+            y = origin.y || 0;
+        config.origin = {
+            x: x,
+            y: y
+        };
+        return config;
+    }
+
+    /**
+     * Slider
+     * @class Slider
+     * @constructor
+     */
         function slider(ol, options) {
             options = options || {
                 mode: 0,
@@ -251,34 +385,30 @@ var Slider = (function() {
             this._isSliding = false;
             //图片索引
             this._index = 1;
-            var config = {};
-            config.mode = options.mode || 0;
-            config.duration = options.duration || 400;
-            config.interval = options.interval || 3000;
-            config.autoPlay = options.autoPlay != null ? options.autoPlay : true;
-            config.timing = options.timing || "linear";
-            //透视之后缩放的比例，默认是一，
-            //一般情况下透视之后图形会比原来要大，这里需要调整一下缩放，一般情况下此值为小于1的数入0.88
-            config.scale = options.scale || 1;
-            var origin = options.origin || {};
-            var x = origin.x || 0,
-                y = origin.y || 0;
-            config.origin = {
-                x: x,
-                y: y
-            };
-            this._config = config;
+
+            this._config = setOptions(options);
             this._aniOut = new window.Animate();
             this._aniIn = new window.Animate();
             this.isPaused = false;
 
-            if (config.autoPlay !== false) {
+            if (this._config.autoPlay !== false) {
                 this.play();
             }
         }
 
     var sliderProto = slider.prototype;
 
+    /**
+     * 上（1/n）个画面
+     * @method prev
+     * @param {number} dis 如果dis大于等于1则表示上dis个画面
+     * @return {Object} Slider
+     * @support ie:>=6,chrome:all,firefox:all,safari:all,opera:all
+     * @for Slider
+     * @example
+     * var sl = new Slider(elem);
+     * sl.prev();
+     */
     sliderProto.prev = function(dis) {
         if (this._isSliding) return this;
 
@@ -329,11 +459,9 @@ var Slider = (function() {
                 }
                 clearTimeout(time);
 
-                //复位动画
                 _self._aniIn.reset();
                 _self._aniOut.reset();
-                //var func = _modeFunc[_self._config.mode];
-                //func.call(_self, slideIn, slideOut);
+
                 _self._index -= dis;
                 if (_self._index < 1)
                     _self._index = _self._lis.length;
@@ -354,11 +482,33 @@ var Slider = (function() {
         return this;
     };
 
-    sliderProto.next = function(noAnimation) {
-        slide.call(this, noAnimation);
+    /**
+     * 下（一/n）个画面
+     * @method next
+     * @param {number} dis 如果dis大于等于1则表示下dis个画面
+     * @return {Object} Slider
+     * @support ie:>=6,chrome:all,firefox:all,safari:all,opera:all
+     * @for Slider
+     * @example
+     * var sl = new Slider(elem);
+     * sl.next();
+     */
+    sliderProto.next = function(dis) {
+        slide.call(this, dis);
         return this;
     };
 
+
+    /**
+     * 暂停轮播
+     * @method pause
+     * @return {Object} Slider
+     * @support ie:>=6,chrome:all,firefox:all,safari:all,opera:all
+     * @for Slider
+     * @example
+     * var sl = new Slider(elem);
+     * sl.pause();
+     */
     sliderProto.pause = function() {
         window.clearInterval(this._intervalKey);
         this._intervalKey = null;
@@ -366,6 +516,18 @@ var Slider = (function() {
         return this;
     };
 
+
+    /**
+     * 开始轮播，用于暂停之后
+     * @method play
+     * @return {Object} Slider
+     * @support ie:>=6,chrome:all,firefox:all,safari:all,opera:all
+     * @for Slider
+     * @example
+     * var sl = new Slider(elem);
+     * sl.pause();
+     * sl.play();
+     */
     sliderProto.play = function() {
         var _self = this;
         if (_self._config.autoPlay) {
@@ -378,7 +540,18 @@ var Slider = (function() {
         return this;
     };
 
-    //转去指定的图片
+
+    /**
+     * 轮播至指定的画面
+     * @method slideTo
+     * @param {Number} index 从1开始
+     * @return {Object} Slider
+     * @support ie:>=6,chrome:all,firefox:all,safari:all,opera:all
+     * @for Slider
+     * @example
+     * var sl = new Slider(elem);
+     * sl.slideTo(2);
+     */
     sliderProto.slideTo = function(index) {
         if (!this.isPaused) {
             index = index * 1;
@@ -404,6 +577,22 @@ var Slider = (function() {
         return this;
     };
 
+
+    /**
+     * 绑定事件
+     * @method on
+     * @param {String} event 事件名，e.g. [slideend,slidestart]
+     * @param {Function} callback 回调函数
+     * @return {Object} Slider
+     * @support ie:>=6,chrome:all,firefox:all,safari:all,opera:all
+     * @for Slider
+     * @example
+     * var sl = new Slider(elem);
+     * sl.on("slideend",function(index){console.log("current:"+index)});
+     * //目前支持的事件有
+     * //slidestart
+     * //slideend
+     */
     sliderProto.on = function(event, callback) {
         if (/string/i.test(typeof event)) {
             if (/function/i.test(typeof callback)) {
@@ -419,6 +608,20 @@ var Slider = (function() {
         return this;
     };
 
+
+    /**
+     * 解除绑定事件
+     * @method off
+     * @param {String} event 事件名，e.g. [slideend,slidestart]
+     * @param {Function} callback 回调函数,如果不写则会解除所有对该事件的绑定
+     * @return {Object} Slider
+     * @support ie:>=6,chrome:all,firefox:all,safari:all,opera:all
+     * @for Slider
+     * @example
+     * var sl = new Slider(elem);
+     * sl.on("slideend",function(index){console.log("current:"+index)});
+     * sl.off("slideend");
+     */
     sliderProto.off = function(event, callback) {
         if (/string/i.test(typeof event)) {
             if (/function/i.test(typeof callback)) {
@@ -437,6 +640,83 @@ var Slider = (function() {
 
         return this;
     };
+
+    /**
+     * 更改配置
+     * @method changeConfig
+     * @param {Object} options 调整选项
+     * @return {Object} Slider
+     * @support ie:>=6,chrome:all,firefox:all,safari:all,opera:all
+     * @for Slider
+     * @example
+     * var sl = new Slider(elem);
+     * sl.changeConfig({mode:2});
+     */
+    sliderProto.changeConfig = function(options) {
+        this.pause();
+        this._config = setOptions(options);
+        this._destroyStyle();
+        this.play();
+        return this;
+    }
+
+    /**
+     * 清除样式
+     * @method _destroyStyle
+     * @private
+     * @return {Object} Slider
+     * @support ie:>=6,chrome:all,firefox:all,safari:all,opera:all
+     * @for Slider
+     */
+    sliderProto._destroyStyle = function() {
+        this.pause();
+        if (this._aniIn.elem)
+            this._aniIn.clear().reset();
+        if (this._aniOut.elem)
+            this._aniOut.clear().reset();
+        //清除动画样式
+        for (var i = 0; i < this._lis.length; i++) {
+            this._lis[i].removeAttribute("style");
+        }
+        this._ol.removeAttribute("style");
+        return this;
+    }
+
+    /**
+     * 摧毁slider
+     * @method destroy
+     * @return {Object} Slider
+     * @support ie:>=6,chrome:all,firefox:all,safari:all,opera:all
+     * @example
+     * var sl = new Slider(elem);
+     * sl.destroy();
+     * @for Slider
+     */
+    sliderProto.destroy = function() {
+        this._destroyStyle();
+        this.isPaused = false;
+        this.isDestroyed = true;
+        for (var evt in this._events) {
+            this.off(evt);
+        }
+        //卸载touch事件
+        this._ol.removeEventListener("touchstart");
+        this._ol.removeEventListener("touchmove");
+        this._ol.removeEventListener("touchend");
+        return this;
+    }
+
+    /**
+     * css前缀
+     * @method _prefixCSS
+     * @private
+     * @return {Object} Slider
+     * @support ie:>=6,chrome:all,firefox:all,safari:all,opera:all
+     * @for Slider
+     */
+    sliderProto._prefixCSS = function(style) {
+        return prefixCSS(style);
+    }
 
     return slider;
 })();

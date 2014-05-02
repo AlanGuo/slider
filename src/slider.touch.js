@@ -9,7 +9,7 @@
  * @method touchToSlide
  * @param {Dom} elem
  * @return {Object} Slider
- * @support ie:>=6,chrome:all,firefox:all
+ * @support ie:>=6,chrome:all,firefox:all,safari:all,opera:all
  * @for Slider
  * @example
  * var ani = new Animate();
@@ -22,27 +22,14 @@ Slider.prototype.touchToSlide = function() {
 
     var slideIn = null;
     var slideOut = null;
+    var isTouchMove = false;
+    var touchevt = null;
 
-    this._ol.addEventListener("touchstart", function(evt) {
-        //滑动开始
-        if (!self._isSliding) {
-            self.pause();
-            touchStart = true;
-            startPos = {
-                x: evt.changedTouches[0].clientX,
-                y: evt.changedTouches[0].clientY
-            };
-
-            slideOut = self._lis[self._lis.length - 1];
-        }
-        evt.preventDefault();
-    });
-
-    this._ol.addEventListener("touchmove", function(evt) {
+    var moveImage = function() {
         //滑动过程
-        if (startPos && touchStart) {
-            var disX = evt.changedTouches[0].clientX - startPos.x;
-            var disY = evt.changedTouches[0].clientY - startPos.y;
+        if (touchevt.changedTouches.length && startPos) {
+            var disX = touchevt.changedTouches[0].clientX - startPos.x;
+            var disY = touchevt.changedTouches[0].clientY - startPos.y;
             //左右移动
             if (self._config.mode == 0 || self._config.mode == 1) {
                 //判断slideIn
@@ -51,29 +38,33 @@ Slider.prototype.touchToSlide = function() {
                     if (self._config.mode == 0) {
                         if (disX > 0) {
                             slideIn = self._lis[0];
+                            //slideIn.removeAttribute("style");
                             self._ol.appendChild(slideIn);
                         } else if (disX < 0) {
                             //从右往左
                             slideIn = self._lis[self._lis.length - 2];
+                            //slideIn.removeAttribute("style");
                         }
                     } else if (self._config.mode == 1) {
                         if (disX < 0) {
                             slideIn = self._lis[0];
+                            //slideIn.removeAttribute("style");
                             self._ol.appendChild(slideIn);
                         } else if (disX > 0) {
                             //从右往左
                             slideIn = self._lis[self._lis.length - 2];
+                            //slideIn.removeAttribute("style");
                         }
                     }
                 }
-                //这里不关心动画方式，使用left移动
+                //这里不关心动画方式，使用transform移动
                 if (slideIn && slideOut) {
                     if (disX > 0) {
-                        slideIn.style.left = -slideIn.clientWidth + disX + "px";
-                        slideOut.style.left = self._config.origin.x + disX + "px";
+                        slideIn.style[self._prefixCSS("transform")] = "translateX(" + (-slideIn.clientWidth + disX) + "px) translateZ(0)";
+                        slideOut.style[self._prefixCSS("transform")] = "translateX(" + (self._config.origin.x + disX) + "px) translateZ(0)";
                     } else if (disX < 0) {
-                        slideIn.style.left = slideIn.clientWidth + disX + "px";
-                        slideOut.style.left = self._config.origin.x + disX + "px";
+                        slideIn.style[self._prefixCSS("transform")] = "translateX(" + (slideIn.clientWidth + disX) + "px) translateZ(0)";
+                        slideOut.style[self._prefixCSS("transform")] = "translateX(" + (self._config.origin.x + disX) + "px) translateZ(0)";
                     }
                 }
             } else if (self._config.mode == 2 || self._config.mode == 3) {
@@ -100,11 +91,11 @@ Slider.prototype.touchToSlide = function() {
                 }
                 if (slideIn && slideOut) {
                     if (disY > 0) {
-                        slideIn.style.top = -slideIn.clientHeight + disY + "px";
-                        slideOut.style.top = self._config.origin.y + disY + "px";
+                        slideIn.style[self._prefixCSS("transform")] = "translateY(" + (-slideIn.clientHeight + disY) + "px) translateZ(0)";
+                        slideOut.style[self._prefixCSS("transform")] = "translateY(" + (self._config.origin.y + disY) + "px) translateZ(0)";
                     } else if (disY < 0) {
-                        slideIn.style.top = slideIn.clientHeight + disY + "px";
-                        slideOut.style.top = self._config.origin.y + disY + "px";
+                        slideIn.style[self._prefixCSS("transform")] = "translateY(" + (slideIn.clientHeight + disY) + "px) translateZ(0)";
+                        slideOut.style[self._prefixCSS("transform")] = "translateY(" + (self._config.origin.y + disY) + "px) translateZ(0)";
                     }
                 }
             } else if (self._config.mode == 5 || self._config.mode == 6) {
@@ -113,7 +104,50 @@ Slider.prototype.touchToSlide = function() {
                 //左右翻转
             }
         }
-        evt.preventDefault();
+    }
+
+    this._ol.addEventListener("touchstart", function(evt) {
+        //滑动开始
+        if (self._config.mode == 0 || self._config.mode == 1 ||
+            self._config.mode == 2 || self._config.mode == 3 ||
+            self._config.mode == 5 || self._config.mode == 6 ||
+            self._config.mode == 7 || self._config.mode == 8) {
+
+            if (!self._isSliding) {
+                self.pause();
+                touchStart = true;
+                startPos = {
+                    x: evt.changedTouches[0].clientX,
+                    y: evt.changedTouches[0].clientY
+                };
+
+                slideOut = self._lis[self._lis.length - 1];
+                //slideOut.removeAttribute("style");
+            }
+            evt.preventDefault();
+        }
+    });
+
+    this._ol.addEventListener("touchmove", function(evt) {
+        if (startPos && touchStart) {
+            touchevt = evt;
+            if (!isTouchMove) {
+                var aniFunc = function() {
+                    moveImage();
+                    if (!isTouchMove) {
+                        isTouchMove = true;
+                    }
+                    //touchend的时候就不再请求下一帧动画
+                    if (startPos && touchStart) {
+                        window.requestAnimationFrame(aniFunc);
+                    } else {
+                        isTouchMove = false;
+                    }
+                }
+                aniFunc();
+            }
+            evt.preventDefault();
+        }
     });
 
     this._ol.addEventListener("touchend", function(evt) {
@@ -144,6 +178,30 @@ Slider.prototype.touchToSlide = function() {
 
                 self._isSliding = true;
             }
+            var setKeyframes = function(percent, frameIn2Trans, frameOut2Trans) {
+                var frameIn1 = {
+                    point: 0
+                };
+                frameIn1[self._prefixCSS("transform")] = slideIn.style[self._prefixCSS("transform")];
+                var frameIn2 = {
+                    point: self._config.duration * percent
+                }
+                frameIn2[self._prefixCSS("transform")] = frameIn2Trans;
+
+                var frameOut1 = {
+                    point: 0
+                };
+                frameOut1[self._prefixCSS("transform")] = slideOut.style[self._prefixCSS("transform")];
+                var frameOut2 = {
+                    point: self._config.duration * percent
+                }
+                frameOut2[self._prefixCSS("transform")] = frameOut2Trans;
+
+                return {
+                    frameIn: [frameIn1, frameIn2],
+                    frameOut: [frameOut1, frameOut2]
+                }
+            }
 
             self._aniIn.setElement(slideIn);
             self._aniOut.setElement(slideOut);
@@ -159,22 +217,10 @@ Slider.prototype.touchToSlide = function() {
                         percent = (slideOut.clientWidth - Math.abs(disX)) / slideOut.clientWidth;
                         //向左滑动
                         //设置关键帧动画
-                        self._aniIn.keyframe({
-                            point: 0,
-                            left: slideIn.style.left
-                        }).keyframe({
-                            point: self._config.duration * percent,
-                            left: self._config.origin.x + "px"
-                        });
 
-                        //设置关键帧
-                        self._aniOut.keyframe({
-                            point: 0,
-                            left: slideOut.style.left
-                        }).keyframe({
-                            point: self._config.duration * percent,
-                            left: -slideOut.clientWidth + "px"
-                        });
+                        var frames = setKeyframes(percent, "translateX(" + self._config.origin.x + "px) translateZ(0)", "translateX(" + (-slideOut.clientWidth) + "px) translateZ(0)");
+                        self._aniIn.keyframe(frames.frameIn);
+                        self._aniOut.keyframe(frames.frameOut);
 
                         startAnimation();
 
@@ -187,7 +233,7 @@ Slider.prototype.touchToSlide = function() {
                                     self._index = 1;
                             } else if (self._config.mode == 1) {
                                 self._index -= 1;
-                                if (self._index <= 1)
+                                if (self._index < 1)
                                     self._index = self._lis.length;
                             }
                             //清理动画
@@ -203,22 +249,9 @@ Slider.prototype.touchToSlide = function() {
                         percent = Math.abs(disX) / slideOut.clientWidth;
                         //还原
                         //设置关键帧动画
-                        self._aniIn.keyframe({
-                            point: 0,
-                            left: slideIn.style.left
-                        }).keyframe({
-                            point: self._config.duration * percent,
-                            left: slideIn.clientWidth + "px"
-                        });
-
-                        //设置关键帧
-                        self._aniOut.keyframe({
-                            point: 0,
-                            left: slideOut.style.left
-                        }).keyframe({
-                            point: self._config.duration * percent,
-                            left: self._config.origin.x + "px"
-                        });
+                        var frames = setKeyframes(percent, "translateX(" + slideIn.clientWidth + "px) translateZ(0)", "translateX(" + self._config.origin.x + "px) translateZ(0)");
+                        self._aniIn.keyframe(frames.frameIn);
+                        self._aniOut.keyframe(frames.frameOut);
 
                         startAnimation();
 
@@ -236,22 +269,9 @@ Slider.prototype.touchToSlide = function() {
                         percent = (slideOut.clientWidth - Math.abs(disX)) / slideOut.clientWidth;
 
                         //设置关键帧动画
-                        self._aniIn.keyframe({
-                            point: 0,
-                            left: slideIn.style.left
-                        }).keyframe({
-                            point: self._config.duration * percent,
-                            left: self._config.origin.x + "px"
-                        });
-
-                        //设置关键帧
-                        self._aniOut.keyframe({
-                            point: 0,
-                            left: slideOut.style.left
-                        }).keyframe({
-                            point: self._config.duration * percent,
-                            left: slideOut.clientWidth + "px"
-                        });
+                        var frames = setKeyframes(percent, "translateX(" + self._config.origin.x + "px) translateZ(0)", "translateX(" + slideOut.clientWidth + "px) translateZ(0)");
+                        self._aniIn.keyframe(frames.frameIn);
+                        self._aniOut.keyframe(frames.frameOut);
 
                         //开始动画
                         startAnimation();
@@ -260,7 +280,7 @@ Slider.prototype.touchToSlide = function() {
 
                             if (self._config.mode == 0) {
                                 self._index -= 1;
-                                if (self._index <= 1)
+                                if (self._index < 1)
                                     self._index = self._lis.length;
                             } else if (self._config.mode == 1) {
                                 self._ol.insertBefore(slideOut, self._lis[0]);
@@ -282,22 +302,9 @@ Slider.prototype.touchToSlide = function() {
                         //还原
 
                         //设置关键帧动画
-                        self._aniIn.keyframe({
-                            point: 0,
-                            left: slideIn.style.left
-                        }).keyframe({
-                            point: self._config.duration * percent,
-                            left: -slideIn.clientWidth + "px"
-                        });
-
-                        //设置关键帧
-                        self._aniOut.keyframe({
-                            point: 0,
-                            left: slideOut.style.left
-                        }).keyframe({
-                            point: self._config.duration * percent,
-                            left: self._config.origin.x + "px"
-                        });
+                        var frames = setKeyframes(percent, "translateX(" + (-slideIn.clientWidth) + "px) translateZ(0)", "translateX(" + self._config.origin.x + "px) translateZ(0)");
+                        self._aniIn.keyframe(frames.frameIn);
+                        self._aniOut.keyframe(frames.frameOut);
 
                         //开始动画
                         startAnimation();
@@ -318,22 +325,9 @@ Slider.prototype.touchToSlide = function() {
                         percent = (slideOut.clientHeight - Math.abs(disY)) / slideOut.clientHeight;
                         //向上滑动
                         //设置关键帧动画
-                        self._aniIn.keyframe({
-                            point: 0,
-                            top: slideIn.style.top
-                        }).keyframe({
-                            point: self._config.duration * percent,
-                            top: self._config.origin.y + "px"
-                        });
-
-                        //设置关键帧
-                        self._aniOut.keyframe({
-                            point: 0,
-                            top: slideOut.style.top
-                        }).keyframe({
-                            point: self._config.duration * percent,
-                            top: -slideOut.clientHeight + "px"
-                        });
+                        var frames = setKeyframes(percent, "translateY(" + self._config.origin.y + "px) translateZ(0)", "translateY(" + (-slideOut.clientHeight) + "px) translateZ(0)");
+                        self._aniIn.keyframe(frames.frameIn);
+                        self._aniOut.keyframe(frames.frameOut);
 
                         startAnimation();
 
@@ -346,10 +340,10 @@ Slider.prototype.touchToSlide = function() {
                                     self._index = 1;
                             } else if (self._config.mode == 3) {
                                 self._index -= 1;
-                                if (self._index <= 1)
+                                if (self._index < 1)
                                     self._index = self._lis.length;
                             }
-
+                            clearAnimation();
                             if (self._events["slideend"]) {
                                 self._events["slideend"].forEach(function(func) {
                                     func && func(self._index, "prev");
@@ -360,22 +354,9 @@ Slider.prototype.touchToSlide = function() {
                         percent = Math.abs(disY) / slideOut.clientHeight;
 
                         //设置关键帧动画
-                        self._aniIn.keyframe({
-                            point: 0,
-                            top: slideIn.style.top
-                        }).keyframe({
-                            point: self._config.duration * percent,
-                            top: slideIn.clientHeight + "px"
-                        });
-
-                        //设置关键帧
-                        self._aniOut.keyframe({
-                            point: 0,
-                            top: slideOut.style.top
-                        }).keyframe({
-                            point: self._config.duration * percent,
-                            top: self._config.origin.y + "px"
-                        });
+                        var frames = setKeyframes(percent, "translateY(" + slideIn.clientHeight + "px) translateZ(0)", "translateY(" + self._config.origin.y + "px) translateZ(0)");
+                        self._aniIn.keyframe(frames.frameIn);
+                        self._aniOut.keyframe(frames.frameOut);
 
                         startAnimation();
 
@@ -393,22 +374,9 @@ Slider.prototype.touchToSlide = function() {
                         percent = (slideOut.clientHeight - Math.abs(disY)) / slideOut.clientHeight;
 
                         //设置关键帧动画
-                        self._aniIn.keyframe({
-                            point: 0,
-                            top: slideIn.style.top
-                        }).keyframe({
-                            point: self._config.duration * percent,
-                            top: self._config.origin.y + "px"
-                        });
-
-                        //设置关键帧
-                        self._aniOut.keyframe({
-                            point: 0,
-                            top: slideOut.style.top
-                        }).keyframe({
-                            point: self._config.duration * percent,
-                            top: slideOut.clientHeight + "px"
-                        });
+                        var frames = setKeyframes(percent, "translateY(" + self._config.origin.y + "px) translateZ(0)", "translateY(" + slideOut.clientHeight + "px) translateZ(0)");
+                        self._aniIn.keyframe(frames.frameIn);
+                        self._aniOut.keyframe(frames.frameOut);
 
                         //开始动画
                         startAnimation();
@@ -416,7 +384,7 @@ Slider.prototype.touchToSlide = function() {
                         var time = setTimeout(function() {
                             if (self._config.mode == 2) {
                                 self._index -= 1;
-                                if (self._index <= 1)
+                                if (self._index < 1)
                                     self._index = self._lis.length;
                             } else if (self._config.mode == 3) {
                                 self._ol.insertBefore(slideOut, self._lis[0]);
@@ -439,22 +407,9 @@ Slider.prototype.touchToSlide = function() {
                         //还原
 
                         //设置关键帧动画
-                        self._aniIn.keyframe({
-                            point: 0,
-                            top: slideIn.style.top
-                        }).keyframe({
-                            point: self._config.duration * percent,
-                            top: -slideIn.clientHeight + "px"
-                        });
-
-                        //设置关键帧
-                        self._aniOut.keyframe({
-                            point: 0,
-                            top: slideOut.style.top
-                        }).keyframe({
-                            point: self._config.duration * percent,
-                            top: self._config.origin.y + "px"
-                        });
+                        var frames = setKeyframes(percent, "translateY(" + (-slideIn.clientHeight) + "px) translateZ(0)", "translateY(" + self._config.origin.y + "px) translateZ(0)");
+                        self._aniIn.keyframe(frames.frameIn);
+                        self._aniOut.keyframe(frames.frameOut);
 
                         //开始动画
                         startAnimation();
