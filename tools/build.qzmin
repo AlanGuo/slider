@@ -6,6 +6,7 @@
 				template:[
 				],
 				include : [
+					"../../animate/animate-1.1.js",
 					"../src/slider.js",
 					"../src/slider.touch.js"
 				]
