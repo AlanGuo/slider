@@ -3,10 +3,11 @@
 			{
 				name :  "slider.js",
 				target : "../release/slider-1.0.js",
+				compiler:"../release/slider-1.0.min.js",
 				template:[
 				],
 				include : [
-					"../../animate/animate-1.1.js",
+					"../../animate/release/animate-1.1.min.js",
 					"../src/slider.js",
 					"../src/slider.touch.js"
 				]

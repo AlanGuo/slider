@@ -3,7 +3,8 @@
  * @project
  * @name Slider
  * @subtitle v1.0
- * @download http://115.29.195.88:82/release/slider-1.0.js
+ * @download http://115.29.195.88:82/release/slider-1.0.min.js
+ * @uncompressdownload http://115.29.195.88:82/release/slider-1.0.js
  * @support ie,chrome,firefox,safari,opera
  *
  * @howto
@@ -57,53 +58,56 @@
  * @2013/10/14
  */
 
+/* exported Slider */
+"use strict";
 var Slider = (function() {
     //direction:0-从右往左, 1-从左往右, 2-从下往上，3-从上往下，4-fadeout/fadein,5-3d向上翻转，6-3d向下翻转
     //5,6暂时只支持webkit内核浏览器
-    var vendorsCSS = 't,-webkit-t,-moz-t,-ms-t,-o-t'.split(',');
+    var vendorsCSS = "t,-webkit-t,-moz-t,-ms-t,-o-t".split(",");
     var judge = function(vendors) {
-        var dummyStyle = document.createElement('div').style;
-        var v = 't,webkitT,MozT,msT,OT'.split(','),
+        var dummyStyle = document.createElement("div").style;
+        var v = "t,webkitT,MozT,msT,OT".split(","),
             t,
             i = 0,
             l = vendors.length;
 
         for (; i < l; i++) {
-            t = v[i] + 'ransform';
+            t = v[i] + "ransform";
             if (t in dummyStyle) {
                 return vendors[i].substr(0, vendors[i].length - 1);
             }
         }
 
         return false;
-    }
+    };
+
     var prefixCSS = function(style) {
         var vendor = judge(vendorsCSS);
-        if (vendor === '') return style;
+        if (vendor === "") return style;
         style = style.charAt(0) + style.substr(1);
         return vendor + style;
-    }
+    };
 
     var _modeFunc = {
         0: function(slideIn, slideOut) {
             var frameIn1 = {
                 point: 0
-            }
+            };
             frameIn1[prefixCSS("transform")] = "translateX(" + slideIn.clientWidth + "px)";
             var frameIn2 = {
-                point: this._config.duration,
-            }
+                point: this._config.duration
+            };
             frameIn2[prefixCSS("transform")] = "translateX(" + this._config.origin.x + "px)";
             this._aniIn.keyframe([frameIn1, frameIn2]);
 
 
             var frameOut1 = {
                 point: 0
-            }
+            };
             frameOut1[prefixCSS("transform")] = "translateX(" + this._config.origin.x + "px)";
             var frameOut2 = {
-                point: this._config.duration,
-            }
+                point: this._config.duration
+            };
             frameOut2[prefixCSS("transform")] = "translateX(" + (-slideOut.clientWidth) + "px)";
             this._aniOut.keyframe([frameOut1, frameOut2]);
         },
@@ -111,22 +115,22 @@ var Slider = (function() {
         1: function(slideIn, slideOut) {
             var frameIn1 = {
                 point: 0
-            }
+            };
             frameIn1[prefixCSS("transform")] = "translateX(" + (-slideIn.clientWidth) + "px)";
             var frameIn2 = {
-                point: this._config.duration,
-            }
+                point: this._config.duration
+            };
             frameIn2[prefixCSS("transform")] = "translateX(" + this._config.origin.x + "px)";
             this._aniIn.keyframe([frameIn1, frameIn2]);
 
 
             var frameOut1 = {
                 point: 0
-            }
+            };
             frameOut1[prefixCSS("transform")] = "translateX(" + this._config.origin.x + "px)";
             var frameOut2 = {
-                point: this._config.duration,
-            }
+                point: this._config.duration
+            };
             frameOut2[prefixCSS("transform")] = "translateX(" + slideOut.clientWidth + "px)";
             this._aniOut.keyframe([frameOut1, frameOut2]);
         },
@@ -134,22 +138,22 @@ var Slider = (function() {
         2: function(slideIn, slideOut) {
             var frameIn1 = {
                 point: 0
-            }
+            };
             frameIn1[prefixCSS("transform")] = "translateY(" + slideIn.clientHeight + "px)";
             var frameIn2 = {
-                point: this._config.duration,
-            }
+                point: this._config.duration
+            };
             frameIn2[prefixCSS("transform")] = "translateY(" + this._config.origin.y + "px)";
             this._aniIn.keyframe([frameIn1, frameIn2]);
 
 
             var frameOut1 = {
                 point: 0
-            }
+            };
             frameOut1[prefixCSS("transform")] = "translateY(" + this._config.origin.y + "px)";
             var frameOut2 = {
-                point: this._config.duration,
-            }
+                point: this._config.duration
+            };
             frameOut2[prefixCSS("transform")] = "translateY(" + (-slideOut.clientHeight) + "px)";
             this._aniOut.keyframe([frameOut1, frameOut2]);
         },
@@ -157,27 +161,27 @@ var Slider = (function() {
         3: function(slideIn, slideOut) {
             var frameIn1 = {
                 point: 0
-            }
+            };
             frameIn1[prefixCSS("transform")] = "translateY(" + (-slideIn.clientHeight) + "px)";
             var frameIn2 = {
-                point: this._config.duration,
-            }
+                point: this._config.duration
+            };
             frameIn2[prefixCSS("transform")] = "translateY(" + this._config.origin.y + "px)";
             this._aniIn.keyframe([frameIn1, frameIn2]);
 
 
             var frameOut1 = {
                 point: 0
-            }
+            };
             frameOut1[prefixCSS("transform")] = "translateY(" + this._config.origin.y + "px)";
             var frameOut2 = {
-                point: this._config.duration,
-            }
+                point: this._config.duration
+            };
             frameOut2[prefixCSS("transform")] = "translateY(" + slideOut.clientHeight + "px)";
             this._aniOut.keyframe([frameOut1, frameOut2]);
         },
 
-        4: function(slideIn, slideOut) {
+        4: function() {
             this._aniIn.keyframe({
                 point: 0,
                 opacity: 0
@@ -200,7 +204,7 @@ var Slider = (function() {
             //3d变化的时候设置父元素属性
             if (this._config.mode == 5 || this._config.mode == 6) {
                 //3d变化
-                this._ol.style.webkitPerspective = "1560px"
+                this._ol.style.webkitPerspective = "1560px";
                 this._ol.style.webkitTransformStyle = "preserve-3d";
                 this._ol.style.webkitTransform = "scale(" + this._config.scale + ")";
                 this._ol.style.overflow = "visible";
@@ -208,22 +212,22 @@ var Slider = (function() {
 
             var frameIn1 = {
                 point: 0
-            }
+            };
             frameIn1[prefixCSS("transform")] = "rotateX(90deg) translateZ(" + tranlate + "px)";
             var frameIn2 = {
-                point: this._config.duration,
-            }
+                point: this._config.duration
+            };
             frameIn2[prefixCSS("transform")] = "rotateX(0deg) translateZ(" + tranlate + "px)";
             this._aniIn.keyframe([frameIn1, frameIn2]);
 
 
             var frameOut1 = {
                 point: 0
-            }
+            };
             frameOut1[prefixCSS("transform")] = "rotateX(0deg) translateZ(" + tranlate + "px)";
             var frameOut2 = {
-                point: this._config.duration,
-            }
+                point: this._config.duration
+            };
             frameOut2[prefixCSS("transform")] = "rotateX(-90deg) translateZ(" + tranlate + "px)";
             this._aniOut.keyframe([frameOut1, frameOut2]);
         },
@@ -233,7 +237,7 @@ var Slider = (function() {
             //3d变化的时候设置父元素属性
             if (this._config.mode == 5 || this._config.mode == 6) {
                 //3d变化
-                this._ol.style.webkitPerspective = "1560px"
+                this._ol.style.webkitPerspective = "1560px";
                 this._ol.style.webkitTransformStyle = "preserve-3d";
                 this._ol.style.webkitTransform = "scale(" + this._config.scale + ")";
                 this._ol.style.overflow = "visible";
@@ -241,26 +245,26 @@ var Slider = (function() {
 
             var frameIn1 = {
                 point: 0
-            }
+            };
             frameIn1[prefixCSS("transform")] = "rotateX(-90deg) translateZ(" + tranlate + "px)";
             var frameIn2 = {
-                point: this._config.duration,
-            }
+                point: this._config.duration
+            };
             frameIn2[prefixCSS("transform")] = "rotateX(0deg) translateZ(" + tranlate + "px)";
             this._aniIn.keyframe([frameIn1, frameIn2]);
 
 
             var frameOut1 = {
                 point: 0
-            }
+            };
             frameOut1[prefixCSS("transform")] = "rotateX(0deg) translateZ(" + tranlate + "px)";
             var frameOut2 = {
-                point: this._config.duration,
-            }
+                point: this._config.duration
+            };
             frameOut2[prefixCSS("transform")] = "rotateX(90deg) translateZ(" + tranlate + "px)";
             this._aniOut.keyframe([frameOut1, frameOut2]);
         }
-    }
+    };
 
     //prev的动画效果
     var _oppositeMode = {
@@ -271,8 +275,7 @@ var Slider = (function() {
         4: 4,
         5: 6,
         6: 5
-    }
-    var preventConcurrent = false;
+    };
 
     var slide = function(dis) {
         if (this._isSliding) return this;
@@ -300,7 +303,7 @@ var Slider = (function() {
             }
 
             //隐藏不可见的li
-            for (var i = 1; i < slideOutArray.length; i++) {
+            for (i = 1; i < slideOutArray.length; i++) {
                 slideOutArray[i].style.display = "none";
             }
 
@@ -332,28 +335,28 @@ var Slider = (function() {
                 if (_self._index > _self._lis.length)
                     _self._index = 1;
 
-                if (_self._events["slideend"]) {
-                    _self._events["slideend"].forEach(function(func) {
-                        func && func(_self._index, "next");
+                if (_self._events.slideend) {
+                    _self._events.slideend.forEach(function(func) {
+                        if (func) func(_self._index, "next");
                     });
                 }
             }, this._config.duration + 80);
 
 
-            if (_self._events["slidestart"]) {
-                _self._events["slidestart"].forEach(function(func) {
-                    func && func(_self._index, "next");
+            if (_self._events.slidestart) {
+                _self._events.slidestart.forEach(function(func) {
+                    if (func) func(_self._index, "next");
                 });
             }
         }
-    }
+    };
 
     var setOptions = function(options) {
         var config = {};
         config.mode = options.mode || 0;
         config.duration = options.duration || 500;
         config.interval = options.interval || 4000;
-        config.autoPlay = options.autoPlay != null ? options.autoPlay : true;
+        config.autoPlay = options.autoPlay !== null ? options.autoPlay : true;
         config.timing = options.timing || "linear";
         //透视之后缩放的比例，默认是一，
         //一般情况下透视之后图形会比原来要大，这里需要调整一下缩放，一般情况下此值为小于1的数入0.88
@@ -366,35 +369,36 @@ var Slider = (function() {
             y: y
         };
         return config;
-    }
+    };
 
     /**
      * Slider
      * @class Slider
      * @constructor
      */
-        function slider(ol, options) {
-            options = options || {
-                mode: 0,
-                duration: 400
-            };
-            //传入列表外面的ol元素
-            this._ol = ol;
-            this._lis = ol.children;
-            this._events = {};
-            this._isSliding = false;
-            //图片索引
-            this._index = 1;
+    function slider(ol, options) {
+        options = options || {
+            mode: 0,
+            duration: 400
+        };
+        /*jshint validthis:true */
+        //传入列表外面的ol元素
+        this._ol = ol;
+        this._lis = ol.children;
+        this._events = {};
+        this._isSliding = false;
+        //图片索引
+        this._index = 1;
 
-            this._config = setOptions(options);
-            this._aniOut = new window.Animate();
-            this._aniIn = new window.Animate();
-            this.isPaused = false;
+        this._config = setOptions(options);
+        this._aniOut = new window.Animate();
+        this._aniIn = new window.Animate();
+        this.isPaused = false;
 
-            if (this._config.autoPlay !== false) {
-                this.play();
-            }
+        if (this._config.autoPlay !== false) {
+            this.play();
         }
+    }
 
     var sliderProto = slider.prototype;
 
@@ -428,7 +432,7 @@ var Slider = (function() {
 
         if (slideIn && slideOut) {
             //加在最顶层
-            for (var i = 0; i < slideInArray.length; i++) {
+            for (i = 0; i < slideInArray.length; i++) {
                 this._ol.appendChild(slideInArray[i]);
                 //不影响动画的暂时隐藏
                 if (i < slideInArray.length - 1) {
@@ -466,16 +470,16 @@ var Slider = (function() {
                 if (_self._index < 1)
                     _self._index = _self._lis.length;
 
-                if (_self._events["slideend"]) {
-                    _self._events["slideend"].forEach(function(func) {
-                        func && func(_self._index, "prev");
+                if (_self._events.slideend) {
+                    _self._events.slideend.forEach(function(func) {
+                        if (func) func(_self._index, "prev");
                     });
                 }
             }, this._config.duration + 80);
 
-            if (_self._events["slidestart"]) {
-                _self._events["slidestart"].forEach(function(func) {
-                    func && func(_self._index, "prev");
+            if (_self._events.slidestart) {
+                _self._events.slidestart.forEach(function(func) {
+                    if (func) func(_self._index, "prev");
                 });
             }
         }
@@ -569,9 +573,9 @@ var Slider = (function() {
             }
 
             var _self = this;
-            var func = function(direction) {
+            var func = function() {
                 _self.play().off("slideend", func);
-            }
+            };
             this.on("slideend", func);
         }
         return this;
@@ -658,7 +662,7 @@ var Slider = (function() {
         this._destroyStyle();
         this.play();
         return this;
-    }
+    };
 
     /**
      * 清除样式
@@ -680,7 +684,7 @@ var Slider = (function() {
         }
         this._ol.removeAttribute("style");
         return this;
-    }
+    };
 
     /**
      * 摧毁slider
@@ -704,7 +708,7 @@ var Slider = (function() {
         this._ol.removeEventListener("touchmove");
         this._ol.removeEventListener("touchend");
         return this;
-    }
+    };
 
     /**
      * css前缀
@@ -716,7 +720,7 @@ var Slider = (function() {
      */
     sliderProto._prefixCSS = function(style) {
         return prefixCSS(style);
-    }
+    };
 
     return slider;
 })();
