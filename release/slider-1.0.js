@@ -377,7 +377,7 @@ var Slider = (function() {
         config.autoPlay = options.autoPlay !== null ? options.autoPlay : true;
         config.timing = options.timing || "linear";
         //透视之后缩放的比例，默认是一，
-        //一般情况下透视之后图形会比原来要大，这里需要调整一下缩放，一般情况下此值为小于1的数入0.88
+        //一般情况下透视之后图形会比原来要大，这里需要调整一下缩放，一般情况下此值为小于1的数如0.88
         config.scale = options.scale || 1;
         var origin = options.origin || {};
         var x = origin.x || 0,
