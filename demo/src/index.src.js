@@ -52,21 +52,12 @@ sl_mode_selectul.onclick = function(evt) {
     }
     target.className = "current";
     var mode = target.getAttribute("mode");
-    if (mode === "5" || mode === "6") {
-        //3d翻转需要一定的缩放值
-        sl1.changeConfig({
-            mode: mode,
-            autoPlay: true,
-            timing: "ease",
-            scale: 0.72
-        });
-    } else {
-        sl1.changeConfig({
-            mode: mode,
-            autoPlay: true,
-            timing: "ease"
-        });
-    }
+    
+    sl1.changeConfig({
+        mode: mode,
+        autoPlay: true,
+        timing: "ease"
+    });
 }
 
 sl_slider_left.onclick = function() {

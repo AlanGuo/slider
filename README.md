@@ -3,6 +3,10 @@ slider
 
 一个前卫，时尚的图片轮播库，提供数种炫酷的轮播效果，适用于时尚的大图轮播网站，使用html5使性能体验达到最佳，支持移动端，而且本库不依赖任何第三方库，轻便易用。
 
+## Live Demo
+
+[http://115.29.195.88:82/demo/index.html](http://115.29.195.88:82/demo/index.html)
+
 ##Get Started
 - html结构组织：
 
