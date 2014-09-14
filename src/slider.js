@@ -63,51 +63,62 @@
 var Slider = (function() {
     //direction:0-从右往左, 1-从左往右, 2-从下往上，3-从上往下，4-fadeout/fadein,5-3d向上翻转，6-3d向下翻转
     //5,6暂时只支持webkit内核浏览器
-    var vendorsCSS = "t,-webkit-t,-moz-t,-ms-t,-o-t".split(",");
-    var judge = function(vendors) {
-        var dummyStyle = document.createElement("div").style;
-        var v = "t,webkitT,MozT,msT,OT".split(","),
-            t,
-            i = 0,
-            l = vendors.length;
+    var createJudgeFunc = function(vendor) {
+        return function(){
+            var dummyStyle = document.createElement('div').style;
+            var v = vendor.prefix.split(','),
+                t,
+                i = 0,
+                l = v.length;
 
-        for (; i < l; i++) {
-            t = v[i] + "ransform";
-            if (t in dummyStyle) {
-                return vendors[i].substr(0, vendors[i].length - 1);
+            for (; i < l; i++) {
+                t = v[i] + vendor.words;
+                if (t in dummyStyle) {
+                    return v[i].substr(0, v[i].length - 1);
+                }
             }
+
+            return false;
         }
-        return false;
     };
 
-    var prefixCSS = function(style) {
-        var vendor = judge(vendorsCSS);
-        if (vendor === "") return style;
+    var prefixCSS = function(style,judgeFunc) {
+        var vendor = judgeFunc();
+        if (vendor === '') return style;
         style = style.charAt(0) + style.substr(1);
         return vendor + style;
-    };
+    }
+
+    var transformJudgeFunc =  createJudgeFunc({
+        prefix:'t,webkitT,MozT,msT,OT',
+        words:'ransform'
+    });
+
+    var transformCSS = prefixCSS("transform",transformJudgeFunc);
+
+    var supportTransform = createJudgeFunc()===false?false:true;
 
     var _modeFunc = {
         0: function(slideIn, slideOut) {
-            if (judge("transform")) {
+            if (supportTransform) {
                 //transform
                 var frameIn1 = {
                     point: 0
                 };
-                frameIn1[prefixCSS("transform")] = "translateX(" + slideIn.clientWidth + "px)";
+                frameIn1[transformCSS] = "translateX(" + slideIn.clientWidth + "px)";
                 var frameIn2 = {
                     point: this._config.duration
                 };
-                frameIn2[prefixCSS("transform")] = "translateX(" + this._config.origin.x + "px)";
+                frameIn2[transformCSS] = "translateX(" + this._config.origin.x + "px)";
 
                 var frameOut1 = {
                     point: 0
                 };
-                frameOut1[prefixCSS("transform")] = "translateX(" + this._config.origin.x + "px)";
+                frameOut1[transformCSS] = "translateX(" + this._config.origin.x + "px)";
                 var frameOut2 = {
                     point: this._config.duration
                 };
-                frameOut2[prefixCSS("transform")] = "translateX(" + (-slideOut.clientWidth) + "px)";
+                frameOut2[transformCSS] = "translateX(" + (-slideOut.clientWidth) + "px)";
             } else {
                 //left
                 var frameIn1 = {
@@ -133,25 +144,25 @@ var Slider = (function() {
         },
 
         1: function(slideIn, slideOut) {
-            if (judge("transform")) {
+            if (supportTransform) {
                 var frameIn1 = {
                     point: 0
                 };
-                frameIn1[prefixCSS("transform")] = "translateX(" + (-slideIn.clientWidth) + "px)";
+                frameIn1[transformCSS] = "translateX(" + (-slideIn.clientWidth) + "px)";
                 var frameIn2 = {
                     point: this._config.duration
                 };
-                frameIn2[prefixCSS("transform")] = "translateX(" + this._config.origin.x + "px)";
+                frameIn2[transformCSS] = "translateX(" + this._config.origin.x + "px)";
 
 
                 var frameOut1 = {
                     point: 0
                 };
-                frameOut1[prefixCSS("transform")] = "translateX(" + this._config.origin.x + "px)";
+                frameOut1[transformCSS] = "translateX(" + this._config.origin.x + "px)";
                 var frameOut2 = {
                     point: this._config.duration
                 };
-                frameOut2[prefixCSS("transform")] = "translateX(" + slideOut.clientWidth + "px)";
+                frameOut2[transformCSS] = "translateX(" + slideOut.clientWidth + "px)";
 
             } else {
                 var frameIn1 = {
@@ -177,24 +188,24 @@ var Slider = (function() {
         },
 
         2: function(slideIn, slideOut) {
-            if (judge("transform")) {
+            if (supportTransform) {
                 var frameIn1 = {
                     point: 0
                 };
-                frameIn1[prefixCSS("transform")] = "translateY(" + slideIn.clientHeight + "px)";
+                frameIn1[transformCSS] = "translateY(" + slideIn.clientHeight + "px)";
                 var frameIn2 = {
                     point: this._config.duration
                 };
-                frameIn2[prefixCSS("transform")] = "translateY(" + this._config.origin.y + "px)";
+                frameIn2[transformCSS] = "translateY(" + this._config.origin.y + "px)";
 
                 var frameOut1 = {
                     point: 0
                 };
-                frameOut1[prefixCSS("transform")] = "translateY(" + this._config.origin.y + "px)";
+                frameOut1[transformCSS] = "translateY(" + this._config.origin.y + "px)";
                 var frameOut2 = {
                     point: this._config.duration
                 };
-                frameOut2[prefixCSS("transform")] = "translateY(" + (-slideOut.clientHeight) + "px)";
+                frameOut2[transformCSS] = "translateY(" + (-slideOut.clientHeight) + "px)";
 
             } else {
                 //top
@@ -222,24 +233,24 @@ var Slider = (function() {
         },
 
         3: function(slideIn, slideOut) {
-            if (judge("transform")) {
+            if (supportTransform) {
                 var frameIn1 = {
                     point: 0
                 };
-                frameIn1[prefixCSS("transform")] = "translateY(" + (-slideIn.clientHeight) + "px)";
+                frameIn1[transformCSS] = "translateY(" + (-slideIn.clientHeight) + "px)";
                 var frameIn2 = {
                     point: this._config.duration
                 };
-                frameIn2[prefixCSS("transform")] = "translateY(" + this._config.origin.y + "px)";
+                frameIn2[transformCSS] = "translateY(" + this._config.origin.y + "px)";
 
                 var frameOut1 = {
                     point: 0
                 };
-                frameOut1[prefixCSS("transform")] = "translateY(" + this._config.origin.y + "px)";
+                frameOut1[transformCSS] = "translateY(" + this._config.origin.y + "px)";
                 var frameOut2 = {
                     point: this._config.duration
                 };
-                frameOut2[prefixCSS("transform")] = "translateY(" + slideOut.clientHeight + "px)";
+                frameOut2[transformCSS] = "translateY(" + slideOut.clientHeight + "px)";
             } else {
                 //top
                 var frameIn1 = {
@@ -297,22 +308,22 @@ var Slider = (function() {
             var frameIn1 = {
                 point: 0
             };
-            frameIn1[prefixCSS("transform")] = "rotateX(90deg) translateZ(" + tranlate + "px)";
+            frameIn1[transformCSS] = "rotateX(90deg) translateZ(" + tranlate + "px)";
             var frameIn2 = {
                 point: this._config.duration
             };
-            frameIn2[prefixCSS("transform")] = "rotateX(0deg) translateZ(" + tranlate + "px)";
+            frameIn2[transformCSS] = "rotateX(0deg) translateZ(" + tranlate + "px)";
             this._aniIn.keyframe([frameIn1, frameIn2]);
 
 
             var frameOut1 = {
                 point: 0
             };
-            frameOut1[prefixCSS("transform")] = "rotateX(0deg) translateZ(" + tranlate + "px)";
+            frameOut1[transformCSS] = "rotateX(0deg) translateZ(" + tranlate + "px)";
             var frameOut2 = {
                 point: this._config.duration
             };
-            frameOut2[prefixCSS("transform")] = "rotateX(-90deg) translateZ(" + tranlate + "px)";
+            frameOut2[transformCSS] = "rotateX(-90deg) translateZ(" + tranlate + "px)";
             this._aniOut.keyframe([frameOut1, frameOut2]);
         },
 
@@ -330,22 +341,22 @@ var Slider = (function() {
             var frameIn1 = {
                 point: 0
             };
-            frameIn1[prefixCSS("transform")] = "rotateX(-90deg) translateZ(" + tranlate + "px)";
+            frameIn1[transformCSS] = "rotateX(-90deg) translateZ(" + tranlate + "px)";
             var frameIn2 = {
                 point: this._config.duration
             };
-            frameIn2[prefixCSS("transform")] = "rotateX(0deg) translateZ(" + tranlate + "px)";
+            frameIn2[transformCSS] = "rotateX(0deg) translateZ(" + tranlate + "px)";
             this._aniIn.keyframe([frameIn1, frameIn2]);
 
 
             var frameOut1 = {
                 point: 0
             };
-            frameOut1[prefixCSS("transform")] = "rotateX(0deg) translateZ(" + tranlate + "px)";
+            frameOut1[transformCSS] = "rotateX(0deg) translateZ(" + tranlate + "px)";
             var frameOut2 = {
                 point: this._config.duration
             };
-            frameOut2[prefixCSS("transform")] = "rotateX(90deg) translateZ(" + tranlate + "px)";
+            frameOut2[transformCSS] = "rotateX(90deg) translateZ(" + tranlate + "px)";
             this._aniOut.keyframe([frameOut1, frameOut2]);
         }
     };
@@ -802,20 +813,20 @@ var Slider = (function() {
      * @support ie:>=6,chrome:all,firefox:all,safari:all,opera:all
      * @for Slider
      */
-    sliderProto._prefixCSS = function(style) {
-        return prefixCSS(style);
+    sliderProto._prefixCSS = function(style,judgeFunc) {
+        return prefixCSS(style,judgeFunc);
     };
 
     /**
      * 判断是否支持样式
-     * @method _judge
+     * @method _supportTransform
      * @private
      * @return {Object} Slider
      * @support ie:>=6,chrome:all,firefox:all,safari:all,opera:all
      * @for Slider
      */
-    sliderProto._judge = function(style) {
-        return judge(style);
+    sliderProto._supportTransform = function() {
+        return transformJudgeFunc();
     };
 
     return slider;

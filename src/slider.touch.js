@@ -25,6 +25,32 @@ Slider.prototype.touchToSlide = function() {
     var isTouchMove = false;
     var touchevt = null;
 
+    var createJudgeFunc = function(vendor) {
+        return function(){
+            var dummyStyle = document.createElement('div').style;
+            var v = vendor.prefix.split(','),
+                t,
+                i = 0,
+                l = v.length;
+
+            for (; i < l; i++) {
+                t = v[i] + vendor.words;
+                if (t in dummyStyle) {
+                    return v[i].substr(0, v[i].length - 1);
+                }
+            }
+
+            return false;
+        }
+    };
+    var transformJudgeFunc =  createJudgeFunc({
+        prefix:'t,webkitT,MozT,msT,OT',
+        words:'ransform'
+    });
+
+    var transformCSS = self._prefixCSS("transform",transformJudgeFunc);
+    var supportTransform = self._supportTransform()===false?false:true;
+
     var moveImage = function() {
         //滑动过程
         if (touchevt.changedTouches.length && startPos) {
@@ -60,19 +86,19 @@ Slider.prototype.touchToSlide = function() {
                 //这里不关心动画方式，使用transform移动
                 if (slideIn && slideOut) {
                     if (disX > 0) {
-                        if (this._judge("transform")) {
+                        if (supportTransform) {
                             //transform
-                            slideIn.style[self._prefixCSS("transform")] = "translateX(" + (-slideIn.clientWidth + disX) + "px) translateZ(0)";
-                            slideOut.style[self._prefixCSS("transform")] = "translateX(" + (self._config.origin.x + disX) + "px) translateZ(0)";
+                            slideIn.style[transformCSS] = "translateX(" + (-slideIn.clientWidth + disX) + "px) translateZ(0)";
+                            slideOut.style[transformCSS] = "translateX(" + (self._config.origin.x + disX) + "px) translateZ(0)";
                         } else {
                             //left
                             slideIn.style["left"] = (-slideIn.clientWidth + disX) + "px";
                             slideOut.style["left"] = (self._config.origin.x + disX) + "px";
                         }
                     } else if (disX < 0) {
-                        if (this._judge("transform")) {
-                            slideIn.style[self._prefixCSS("transform")] = "translateX(" + (slideIn.clientWidth + disX) + "px) translateZ(0)";
-                            slideOut.style[self._prefixCSS("transform")] = "translateX(" + (self._config.origin.x + disX) + "px) translateZ(0)";
+                        if (supportTransform) {
+                            slideIn.style[transformCSS] = "translateX(" + (slideIn.clientWidth + disX) + "px) translateZ(0)";
+                            slideOut.style[transformCSS] = "translateX(" + (self._config.origin.x + disX) + "px) translateZ(0)";
                         } else {
                             //left
                             slideIn.style["left"] = (slideIn.clientWidth + disX) + "px";
@@ -104,17 +130,17 @@ Slider.prototype.touchToSlide = function() {
                 }
                 if (slideIn && slideOut) {
                     if (disY > 0) {
-                        if (this._judge("transform")) {
-                            slideIn.style[self._prefixCSS("transform")] = "translateY(" + (-slideIn.clientHeight + disY) + "px) translateZ(0)";
-                            slideOut.style[self._prefixCSS("transform")] = "translateY(" + (self._config.origin.y + disY) + "px) translateZ(0)";
+                        if (supportTransform) {
+                            slideIn.style[transformCSS] = "translateY(" + (-slideIn.clientHeight + disY) + "px) translateZ(0)";
+                            slideOut.style[transformCSS] = "translateY(" + (self._config.origin.y + disY) + "px) translateZ(0)";
                         } else {
                             slideIn.style["left"] = (-slideIn.clientHeight + disY) + "px";
                             slideOut.style["left"] = (self._config.origin.y + disY) + "px";
                         }
                     } else if (disY < 0) {
-                        if (this._judge("transform")) {
-                            slideIn.style[self._prefixCSS("transform")] = "translateY(" + (slideIn.clientHeight + disY) + "px) translateZ(0)";
-                            slideOut.style[self._prefixCSS("transform")] = "translateY(" + (self._config.origin.y + disY) + "px) translateZ(0)";
+                        if (supportTransform) {
+                            slideIn.style[transformCSS] = "translateY(" + (slideIn.clientHeight + disY) + "px) translateZ(0)";
+                            slideOut.style[transformCSS] = "translateY(" + (self._config.origin.y + disY) + "px) translateZ(0)";
                         } else {
                             slideIn.style["left"] = (slideIn.clientHeight + disY) + "px";
                             slideOut.style["left"] = (self._config.origin.y + disY) + "px";
@@ -206,20 +232,20 @@ Slider.prototype.touchToSlide = function() {
                 var frameIn1 = {
                     point: 0
                 };
-                frameIn1[self._prefixCSS("transform")] = slideIn.style[self._prefixCSS("transform")];
+                frameIn1[transformCSS] = slideIn.style[transformCSS];
                 var frameIn2 = {
                     point: self._config.duration * percent
                 }
-                frameIn2[self._prefixCSS("transform")] = frameIn2Trans;
+                frameIn2[transformCSS] = frameIn2Trans;
 
                 var frameOut1 = {
                     point: 0
                 };
-                frameOut1[self._prefixCSS("transform")] = slideOut.style[self._prefixCSS("transform")];
+                frameOut1[transformCSS] = slideOut.style[transformCSS];
                 var frameOut2 = {
                     point: self._config.duration * percent
                 }
-                frameOut2[self._prefixCSS("transform")] = frameOut2Trans;
+                frameOut2[transformCSS] = frameOut2Trans;
 
                 return {
                     frameIn: [frameIn1, frameIn2],
@@ -241,7 +267,7 @@ Slider.prototype.touchToSlide = function() {
                         percent = (slideOut.clientWidth - Math.abs(disX)) / slideOut.clientWidth;
                         //向左滑动
                         //设置关键帧动画
-
+                        //这里只支持transform
                         var frames = setKeyframes(percent, "translateX(" + self._config.origin.x + "px) translateZ(0)", "translateX(" + (-slideOut.clientWidth) + "px) translateZ(0)");
                         self._aniIn.keyframe(frames.frameIn);
                         self._aniOut.keyframe(frames.frameOut);
