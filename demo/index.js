@@ -62,7 +62,7 @@ sl_slider_ul.innerHTML = jstemplate(liTemplate, {
 
 var sl1 = new Slider(sl_slider_ul, {
     mode: 0,
-    autoPlay: false,
+    autoPlay: true,
     timing: "ease"
 }).touchToSlide();
 sl1.on("slideend", function(index) {

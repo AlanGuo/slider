@@ -79,18 +79,18 @@ var Slider = (function() {
             }
 
             return false;
-        }
+        };
     };
 
     var prefixCSS = function(style,judgeFunc) {
         var vendor = judgeFunc();
-        if (vendor === '') return style;
+        if (vendor === '') {return style;}
         style = style.charAt(0) + style.substr(1);
         return vendor + style;
-    }
+    };
 
     var transformJudgeFunc =  createJudgeFunc({
-        prefix:'t,webkitT,MozT,msT,OT',
+        prefix:'t,-webkit-t,-moz-t,-ms-t,-o-t',
         words:'ransform'
     });
 
@@ -98,43 +98,45 @@ var Slider = (function() {
 
     var supportTransform = createJudgeFunc()===false?false:true;
 
+
+    var frameIn1,frameIn2,frameOut1,frameOut2;
     var _modeFunc = {
         0: function(slideIn, slideOut) {
             if (supportTransform) {
                 //transform
-                var frameIn1 = {
+                frameIn1 = {
                     point: 0
                 };
                 frameIn1[transformCSS] = "translateX(" + slideIn.clientWidth + "px)";
-                var frameIn2 = {
+                frameIn2 = {
                     point: this._config.duration
                 };
                 frameIn2[transformCSS] = "translateX(" + this._config.origin.x + "px)";
 
-                var frameOut1 = {
+                frameOut1 = {
                     point: 0
                 };
                 frameOut1[transformCSS] = "translateX(" + this._config.origin.x + "px)";
-                var frameOut2 = {
+                frameOut2 = {
                     point: this._config.duration
                 };
                 frameOut2[transformCSS] = "translateX(" + (-slideOut.clientWidth) + "px)";
             } else {
                 //left
-                var frameIn1 = {
+                frameIn1 = {
                     point: 0,
                     left: slideIn.clientWidth + "px"
                 };
-                var frameIn2 = {
+                frameIn2 = {
                     point: this._config.duration,
                     left: this._config.origin.x + "px"
                 };
 
-                var frameOut1 = {
+                frameOut1 = {
                     point: 0,
                     left: this._config.origin.x + "px"
                 };
-                var frameOut2 = {
+                frameOut2 = {
                     point: this._config.duration,
                     left: -slideOut.clientWidth + "px"
                 };
@@ -145,40 +147,40 @@ var Slider = (function() {
 
         1: function(slideIn, slideOut) {
             if (supportTransform) {
-                var frameIn1 = {
+                frameIn1 = {
                     point: 0
                 };
                 frameIn1[transformCSS] = "translateX(" + (-slideIn.clientWidth) + "px)";
-                var frameIn2 = {
+                frameIn2 = {
                     point: this._config.duration
                 };
                 frameIn2[transformCSS] = "translateX(" + this._config.origin.x + "px)";
 
 
-                var frameOut1 = {
+                frameOut1 = {
                     point: 0
                 };
                 frameOut1[transformCSS] = "translateX(" + this._config.origin.x + "px)";
-                var frameOut2 = {
+                frameOut2 = {
                     point: this._config.duration
                 };
                 frameOut2[transformCSS] = "translateX(" + slideOut.clientWidth + "px)";
 
             } else {
-                var frameIn1 = {
+                frameIn1 = {
                     point: 0,
                     left: -slideIn.clientWidth + "px"
                 };
-                var frameIn2 = {
+                frameIn2 = {
                     point: this._config.duration,
                     left: this._config.origin.x + "px"
                 };
 
-                var frameOut1 = {
+                frameOut1 = {
                     point: 0,
                     left: this._config.origin.x + "px"
                 };
-                var frameOut2 = {
+                frameOut2 = {
                     point: this._config.duration,
                     left: slideOut.clientWidth + "px"
                 };
@@ -189,40 +191,40 @@ var Slider = (function() {
 
         2: function(slideIn, slideOut) {
             if (supportTransform) {
-                var frameIn1 = {
+                frameIn1 = {
                     point: 0
                 };
                 frameIn1[transformCSS] = "translateY(" + slideIn.clientHeight + "px)";
-                var frameIn2 = {
+                frameIn2 = {
                     point: this._config.duration
                 };
                 frameIn2[transformCSS] = "translateY(" + this._config.origin.y + "px)";
 
-                var frameOut1 = {
+                frameOut1 = {
                     point: 0
                 };
                 frameOut1[transformCSS] = "translateY(" + this._config.origin.y + "px)";
-                var frameOut2 = {
+                frameOut2 = {
                     point: this._config.duration
                 };
                 frameOut2[transformCSS] = "translateY(" + (-slideOut.clientHeight) + "px)";
 
             } else {
                 //top
-                var frameIn1 = {
+                frameIn1 = {
                     point: 0,
                     top: slideIn.clientHeight + "px"
                 };
-                var frameIn2 = {
+                frameIn2 = {
                     point: this._config.duration,
                     top: this._config.origin.y + "px"
                 };
 
-                var frameOut1 = {
+                frameOut1 = {
                     point: 0,
                     top: this._config.origin.y + "px"
                 };
-                var frameOut2 = {
+                frameOut2 = {
                     point: this._config.duration,
                     top: -slideOut.clientHeight + "px"
                 };
@@ -234,39 +236,39 @@ var Slider = (function() {
 
         3: function(slideIn, slideOut) {
             if (supportTransform) {
-                var frameIn1 = {
+                frameIn1 = {
                     point: 0
                 };
                 frameIn1[transformCSS] = "translateY(" + (-slideIn.clientHeight) + "px)";
-                var frameIn2 = {
+                frameIn2 = {
                     point: this._config.duration
                 };
                 frameIn2[transformCSS] = "translateY(" + this._config.origin.y + "px)";
 
-                var frameOut1 = {
+                frameOut1 = {
                     point: 0
                 };
                 frameOut1[transformCSS] = "translateY(" + this._config.origin.y + "px)";
-                var frameOut2 = {
+                frameOut2 = {
                     point: this._config.duration
                 };
                 frameOut2[transformCSS] = "translateY(" + slideOut.clientHeight + "px)";
             } else {
                 //top
-                var frameIn1 = {
+                frameIn1 = {
                     point: 0,
                     top: -slideIn.clientHeight + "px"
                 };
-                var frameIn2 = {
+                frameIn2 = {
                     point: this._config.duration,
                     top: this._config.origin.y + "px"
                 };
 
-                var frameOut1 = {
+                frameOut1 = {
                     point: 0,
                     top: this._config.origin.y + "px"
                 };
-                var frameOut2 = {
+                frameOut2 = {
                     point: this._config.duration,
                     top: slideOut.clientHeight + "px"
                 };
@@ -297,7 +299,7 @@ var Slider = (function() {
         5: function(slideIn, slideOut) {
             var tranlate = slideOut.clientHeight / 2;
             //3d变化的时候设置父元素属性
-            if (this._config.mode == 5 || this._config.mode == 6) {
+            if (this._config.mode === 5 || this._config.mode === 6) {
                 //3d变化
                 this._ol.style.webkitPerspective = "1560px";
                 this._ol.style.webkitTransformStyle = "preserve-3d";
@@ -305,22 +307,22 @@ var Slider = (function() {
                 this._ol.style.overflow = "visible";
             }
 
-            var frameIn1 = {
+            frameIn1 = {
                 point: 0
             };
             frameIn1[transformCSS] = "rotateX(90deg) translateZ(" + tranlate + "px)";
-            var frameIn2 = {
+            frameIn2 = {
                 point: this._config.duration
             };
             frameIn2[transformCSS] = "rotateX(0deg) translateZ(" + tranlate + "px)";
             this._aniIn.keyframe([frameIn1, frameIn2]);
 
 
-            var frameOut1 = {
+            frameOut1 = {
                 point: 0
             };
             frameOut1[transformCSS] = "rotateX(0deg) translateZ(" + tranlate + "px)";
-            var frameOut2 = {
+            frameOut2 = {
                 point: this._config.duration
             };
             frameOut2[transformCSS] = "rotateX(-90deg) translateZ(" + tranlate + "px)";
@@ -330,7 +332,7 @@ var Slider = (function() {
         6: function(slideIn, slideOut) {
             var tranlate = slideOut.clientHeight / 2;
             //3d变化的时候设置父元素属性
-            if (this._config.mode == 5 || this._config.mode == 6) {
+            if (this._config.mode === 5 || this._config.mode === 6) {
                 //3d变化
                 this._ol.style.webkitPerspective = "1560px";
                 this._ol.style.webkitTransformStyle = "preserve-3d";
@@ -338,22 +340,22 @@ var Slider = (function() {
                 this._ol.style.overflow = "visible";
             }
 
-            var frameIn1 = {
+            frameIn1 = {
                 point: 0
             };
             frameIn1[transformCSS] = "rotateX(-90deg) translateZ(" + tranlate + "px)";
-            var frameIn2 = {
+            frameIn2 = {
                 point: this._config.duration
             };
             frameIn2[transformCSS] = "rotateX(0deg) translateZ(" + tranlate + "px)";
             this._aniIn.keyframe([frameIn1, frameIn2]);
 
 
-            var frameOut1 = {
+            frameOut1 = {
                 point: 0
             };
             frameOut1[transformCSS] = "rotateX(0deg) translateZ(" + tranlate + "px)";
-            var frameOut2 = {
+            frameOut2 = {
                 point: this._config.duration
             };
             frameOut2[transformCSS] = "rotateX(90deg) translateZ(" + tranlate + "px)";
@@ -373,7 +375,7 @@ var Slider = (function() {
     };
 
     var slide = function(dis) {
-        if (this._isSliding) return this;
+        if (this._isSliding) {return this;}
         dis = dis || 1;
         var func = _modeFunc[this._config.mode];
         var slideIn = this._lis[this._lis.length - dis - 1];
@@ -427,12 +429,13 @@ var Slider = (function() {
 
                 clearTimeout(time);
                 _self._index += dis;
-                if (_self._index > _self._lis.length)
+                if (_self._index > _self._lis.length){
                     _self._index = 1;
+                }
 
                 if (_self._events.slideend) {
                     _self._events.slideend.forEach(function(func) {
-                        if (func) func(_self._index, "next");
+                        if (func) {func(_self._index, "next");}
                     });
                 }
             }, this._config.duration + 80);
@@ -440,7 +443,7 @@ var Slider = (function() {
 
             if (_self._events.slidestart) {
                 _self._events.slidestart.forEach(function(func) {
-                    if (func) func(_self._index, "next");
+                    if (func) {func(_self._index, "next");}
                 });
             }
         }
@@ -509,7 +512,7 @@ var Slider = (function() {
      * sl.prev();
      */
     sliderProto.prev = function(dis) {
-        if (this._isSliding) return this;
+        if (this._isSliding) {return this;}
 
         dis = dis || 1;
         var _self = this;
@@ -562,19 +565,20 @@ var Slider = (function() {
                 _self._aniOut.reset();
 
                 _self._index -= dis;
-                if (_self._index < 1)
+                if (_self._index < 1){
                     _self._index = _self._lis.length;
+                }
 
                 if (_self._events.slideend) {
                     _self._events.slideend.forEach(function(func) {
-                        if (func) func(_self._index, "prev");
+                        if (func) {func(_self._index, "prev");}
                     });
                 }
             }, this._config.duration + 80);
 
             if (_self._events.slidestart) {
                 _self._events.slidestart.forEach(function(func) {
-                    if (func) func(_self._index, "prev");
+                    if (func) {func(_self._index, "prev");}
                 });
             }
         }
@@ -695,7 +699,7 @@ var Slider = (function() {
     sliderProto.on = function(event, callback) {
         if (/string/i.test(typeof event)) {
             if (/function/i.test(typeof callback)) {
-                if (!this._events[event]) this._events[event] = [];
+                if (!this._events[event]) {this._events[event] = [];}
                 this._events[event].push(callback);
             } else {
                 throw new TypeError("callback must be a function");
@@ -769,10 +773,12 @@ var Slider = (function() {
      */
     sliderProto._destroyStyle = function() {
         this.pause();
-        if (this._aniIn.elem)
+        if (this._aniIn.elem){
             this._aniIn.clear().reset();
-        if (this._aniOut.elem)
+        }
+        if (this._aniOut.elem){
             this._aniOut.clear().reset();
+        }
         //清除动画样式
         for (var i = 0; i < this._lis.length; i++) {
             this._lis[i].removeAttribute("style");
