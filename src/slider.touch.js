@@ -15,6 +15,8 @@
  * var ani = new Animate();
  * ani.touchToSlide();
  */
+
+var Slider = Slider || {};
 Slider.prototype.touchToSlide = function() {
     var touchStart = false;
     var startPos = null;
@@ -51,6 +53,11 @@ Slider.prototype.touchToSlide = function() {
     var transformCSS = self._prefixCSS("transform",transformJudgeFunc);
     var supportTransform = self._supportTransform()===false?false:true;
 
+    //开启加速
+    for(var i=0;i<this._lis.length;i++){
+        this._lis[i].style[transformCSS] = "translateZ(0)";
+    }
+    
     var moveImage = function() {
         //滑动过程
         if (touchevt.changedTouches.length && startPos) {
@@ -61,44 +68,39 @@ Slider.prototype.touchToSlide = function() {
                 //判断slideIn
                 if (!slideIn) {
                     //从左往右
-                    if (self._config.mode === 0) {
-                        if (disX > 0) {
-                            slideIn = self._lis[0];
-                            //slideIn.removeAttribute("style");
-                            self._ol.appendChild(slideIn);
-                        } else if (disX < 0) {
-                            //从右往左
-                            slideIn = self._lis[self._lis.length - 2];
-                            //slideIn.removeAttribute("style");
-                        }
-                    } else if (self._config.mode === 1) {
-                        if (disX < 0) {
-                            slideIn = self._lis[0];
-                            //slideIn.removeAttribute("style");
-                            self._ol.appendChild(slideIn);
-                        } else if (disX > 0) {
-                            //从右往左
-                            slideIn = self._lis[self._lis.length - 2];
-                            //slideIn.removeAttribute("style");
-                        }
+                    if (disX > 0) {
+                        slideIn = self._lis[self._lis.length - self._index + 1];
+                    } else if (disX < 0) {
+                        //从右往左
+                        slideIn = self._lis[self._lis.length - self._index - 1];
                     }
                 }
                 //这里不关心动画方式，使用transform移动
                 if (slideIn && slideOut) {
+                    //动画在最前
+                    slideIn.style.zIndex = slideOut.style.zIndex = "initial";
+                    //其他的在后面
+                    for(i=0;i<self._lis.length;i++){
+                        if(self._lis[i] !== slideIn && self._lis[i] !== slideOut){
+                            self._lis[i].style.zIndex = self._config.zIndex - 1;
+                        }
+                    }
+
                     if (disX > 0) {
                         if (supportTransform) {
                             //transform
-                            slideIn.style[transformCSS] = "translateX(" + (-slideIn.clientWidth + disX) + "px) translateZ(0)";
-                            slideOut.style[transformCSS] = "translateX(" + (self._config.origin.x + disX) + "px) translateZ(0)";
+                            slideIn.style[transformCSS] = "translateX(" + parseInt(-slideIn.clientWidth + disX) + "px) translateZ(0)";
+                            slideOut.style[transformCSS] = "translateX(" + parseInt(self._config.origin.x + disX) + "px) translateZ(0)";
                         } else {
                             //left
-                            slideIn.style["left"] = (-slideIn.clientWidth + disX) + "px";
-                            slideOut.style["left"] = (self._config.origin.x + disX) + "px";
+                            slideIn.style["left"] = parseInt(-slideIn.clientWidth + disX) + "px";
+                            slideOut.style["left"] = parseInt(self._config.origin.x + disX) + "px";
                         }
                     } else if (disX < 0) {
                         if (supportTransform) {
-                            slideIn.style[transformCSS] = "translateX(" + (slideIn.clientWidth + disX) + "px) translateZ(0)";
-                            slideOut.style[transformCSS] = "translateX(" + (self._config.origin.x + disX) + "px) translateZ(0)";
+                            //transform
+                            slideIn.style[transformCSS] = "translateX(" + parseInt(slideIn.clientWidth + disX) + "px) translateZ(0)";
+                            slideOut.style[transformCSS] = "translateX(" + parseInt(self._config.origin.x + disX) + "px) translateZ(0)";
                         } else {
                             //left
                             slideIn.style["left"] = (slideIn.clientWidth + disX) + "px";
@@ -111,39 +113,40 @@ Slider.prototype.touchToSlide = function() {
                 //判断slideIn
                 if (!slideIn) {
                     //从上往下
-                    if (self._config.mode === 2) {
-                        if (disY > 0) {
-                            slideIn = self._lis[0];
-                            self._ol.appendChild(slideIn);
-                        } else if (disY < 0) {
-                            //从下往上
-                            slideIn = self._lis[self._lis.length - 2];
-                        }
-                    } else if (self._config.mode === 3) {
-                        if (disY > 0) {
-                            slideIn = self._lis[self._lis.length - 2];
-                        } else if (disY < 0) {
-                            slideIn = self._lis[0];
-                            self._ol.appendChild(slideIn);
-                        }
+                    if (disY > 0) {
+                        slideIn = self._lis[self._lis.length - self._index + 1];
+                    } else if (disY < 0) {
+                        //从下往上
+                        slideIn = self._lis[self._lis.length - self._index - 1];
                     }
                 }
+                
                 if (slideIn && slideOut) {
+
+                    slideIn.style.zIndex = slideOut.style.zIndex = "initial";
+                    //其他的在后面
+                    for(i=0;i<self._lis.length;i++){
+                        if(self._lis[i] !== slideIn && self._lis[i] !== slideOut){
+                            self._lis[i].style.zIndex = self._config.zIndex - 1;
+                        }
+                    }
+
+                    
                     if (disY > 0) {
                         if (supportTransform) {
-                            slideIn.style[transformCSS] = "translateY(" + (-slideIn.clientHeight + disY) + "px) translateZ(0)";
-                            slideOut.style[transformCSS] = "translateY(" + (self._config.origin.y + disY) + "px) translateZ(0)";
+                            slideIn.style[transformCSS] = "translateY(" + parseInt(-slideIn.clientHeight + disY) + "px) translateZ(0)";
+                            slideOut.style[transformCSS] = "translateY(" + parseInt(self._config.origin.y + disY) + "px) translateZ(0)";
                         } else {
-                            slideIn.style["left"] = (-slideIn.clientHeight + disY) + "px";
-                            slideOut.style["left"] = (self._config.origin.y + disY) + "px";
+                            slideIn.style["left"] = parseInt(-slideIn.clientHeight + disY) + "px";
+                            slideOut.style["left"] = parseInt(self._config.origin.y + disY) + "px";
                         }
                     } else if (disY < 0) {
                         if (supportTransform) {
-                            slideIn.style[transformCSS] = "translateY(" + (slideIn.clientHeight + disY) + "px) translateZ(0)";
-                            slideOut.style[transformCSS] = "translateY(" + (self._config.origin.y + disY) + "px) translateZ(0)";
+                            slideIn.style[transformCSS] = "translateY(" + parseInt(slideIn.clientHeight + disY) + "px) translateZ(0)";
+                            slideOut.style[transformCSS] = "translateY(" + parseInt(self._config.origin.y + disY) + "px) translateZ(0)";
                         } else {
-                            slideIn.style["left"] = (slideIn.clientHeight + disY) + "px";
-                            slideOut.style["left"] = (self._config.origin.y + disY) + "px";
+                            slideIn.style["left"] = parseInt(slideIn.clientHeight + disY) + "px";
+                            slideOut.style["left"] = parseInt(self._config.origin.y + disY) + "px";
                         }
                     }
                 }
@@ -171,8 +174,7 @@ Slider.prototype.touchToSlide = function() {
                     y: evt.changedTouches[0].clientY
                 };
 
-                slideOut = self._lis[self._lis.length - 1];
-                //slideOut.removeAttribute("style");
+                slideOut = self._lis[self._lis.length - self._index];
             }
             evt.preventDefault();
         }
@@ -203,286 +205,266 @@ Slider.prototype.touchToSlide = function() {
     var touchend = function(evt) {
         //滑动结束
         if (startPos && touchStart) {
-            var disX = evt.changedTouches[0].clientX - startPos.x;
-            var disY = evt.changedTouches[0].clientY - startPos.y;
-            var percent = 1;
+            if(slideIn && slideOut){
+                var disX = evt.changedTouches[0].clientX - startPos.x;
+                var disY = evt.changedTouches[0].clientY - startPos.y;
+                var percent = 1;
+                var offset = 0.5;
+                var canNext = true, canPrev = true, can = true;
 
-            var clearAnimation = function() {
-                clearTimeout(time);
-                self._aniIn.reset();
-                self._aniOut.reset();
-                slideIn = null;
-                slideOut = null;
+                var clearAnimation = function() {
+                    clearTimeout(time);
+                    self._aniIn.reset();
+                    self._aniOut.reset();
+                    slideIn = null;
+                    slideOut = null;
 
-                self._isSliding = false;
-                self.play();
-            };
-            var startAnimation = function() {
-                //开始动画
-                self._aniIn.start({
-                    timing: self._config.timing
-                });
-                self._aniOut.start({
-                    timing: self._config.timing
-                });
-
-                self._isSliding = true;
-            };
-            var setKeyframes = function(percent, frameIn2Trans, frameOut2Trans) {
-                var frameIn1 = {
-                    point: 0
+                    self._isSliding = false;
+                    self.play();
                 };
-                frameIn1[transformCSS] = slideIn.style[transformCSS];
-                var frameIn2 = {
-                    point: self._config.duration * percent
+                var startAnimation = function() {
+                    //开始动画
+                    self._aniIn.start({
+                        timing: self._config.timing
+                    });
+                    self._aniOut.start({
+                        timing: self._config.timing
+                    });
+
+                    self._isSliding = true;
                 };
-                frameIn2[transformCSS] = frameIn2Trans;
+                var setKeyframes = function(percent, frameIn2Trans, frameOut2Trans) {
+                    var frameIn1 = {
+                        point: 0
+                    };
+                    frameIn1[transformCSS] = slideIn.style[transformCSS];
+                    var frameIn2 = {
+                        point: self._config.duration * percent
+                    };
+                    frameIn2[transformCSS] = frameIn2Trans;
 
-                var frameOut1 = {
-                    point: 0
+                    var frameOut1 = {
+                        point: 0
+                    };
+                    frameOut1[transformCSS] = slideOut.style[transformCSS];
+                    var frameOut2 = {
+                        point: self._config.duration * percent
+                    };
+                    frameOut2[transformCSS] = frameOut2Trans;
+
+                    return {
+                        frameIn: [frameIn1, frameIn2],
+                        frameOut: [frameOut1, frameOut2]
+                    };
                 };
-                frameOut1[transformCSS] = slideOut.style[transformCSS];
-                var frameOut2 = {
-                    point: self._config.duration * percent
-                };
-                frameOut2[transformCSS] = frameOut2Trans;
 
-                return {
-                    frameIn: [frameIn1, frameIn2],
-                    frameOut: [frameOut1, frameOut2]
-                };
-            };
+                self._aniIn.setElement(slideIn);
+                self._aniOut.setElement(slideOut);
 
-            self._aniIn.setElement(slideIn);
-            self._aniOut.setElement(slideOut);
+                self._aniIn.clear();
+                self._aniOut.clear();
 
-            self._aniIn.clear();
-            self._aniOut.clear();
+                var frames,time;
 
-            var frames,time;
-            if (self._config.mode === 0 || self._config.mode === 1) {
-                //继续判断是否需要切换下一张图片
-                if (disX < 0) {
-                    //下一张图片
-                    if (Math.abs(disX) > slideOut.clientWidth / 2) {
-                        percent = (slideOut.clientWidth - Math.abs(disX)) / slideOut.clientWidth;
-                        //向左滑动
-                        //设置关键帧动画
-                        //这里只支持transform
-                        frames = setKeyframes(percent, "translateX(" + self._config.origin.x + "px) translateZ(0)", "translateX(" + (-slideOut.clientWidth) + "px) translateZ(0)");
-                        self._aniIn.keyframe(frames.frameIn);
-                        self._aniOut.keyframe(frames.frameOut);
-
-                        startAnimation();
-
-                        time = setTimeout(function() {
-                            //动画结束
-                            if (self._config.mode === 0) {
-                                self._ol.insertBefore(slideOut, self._lis[0]);
-                                self._index += 1;
-                                if (self._index > self._lis.length){
-                                    self._index = 1;
-                                }
-                            } else if (self._config.mode === 1) {
-                                self._index -= 1;
-                                if (self._index < 1){
-                                    self._index = self._lis.length;
-                                }
-                            }
-                            //清理动画
-                            clearAnimation();
-
-                            if (self._events["slideend"]) {
-                                self._events["slideend"].forEach(function(func) {
-                                    if(func) {func(self._index, "prev");}
-                                });
-                            }
-                        }, self._config.duration * percent + 80);
-                    } else {
-                        percent = Math.abs(disX) / slideOut.clientWidth;
-                        //还原
-                        //设置关键帧动画
-                        frames = setKeyframes(percent, "translateX(" + slideIn.clientWidth + "px) translateZ(0)", "translateX(" + self._config.origin.x + "px) translateZ(0)");
-                        self._aniIn.keyframe(frames.frameIn);
-                        self._aniOut.keyframe(frames.frameOut);
-
-                        startAnimation();
-
-                        time = setTimeout(function() {
-                            if (self._config.mode === 1){
-                                self._ol.insertBefore(slideIn, self._ol.children[0]);
-                            }
-                            //清理动画
-                            clearAnimation();
-                        }, self._config.duration * percent + 80);
+                if(!self._config.repeat){
+                    if(self._index >= self._lis.length){
+                        canNext = false;
                     }
-                } else if (disX > 0) {
-                    //向右滑动
-                    //下一张图片
-                    if (Math.abs(disX) > slideOut.clientWidth / 2) {
-                        percent = (slideOut.clientWidth - Math.abs(disX)) / slideOut.clientWidth;
-
-                        //设置关键帧动画
-                        frames = setKeyframes(percent, "translateX(" + self._config.origin.x + "px) translateZ(0)", "translateX(" + slideOut.clientWidth + "px) translateZ(0)");
-                        self._aniIn.keyframe(frames.frameIn);
-                        self._aniOut.keyframe(frames.frameOut);
-
-                        //开始动画
-                        startAnimation();
-
-                        time = setTimeout(function() {
-
-                            if (self._config.mode === 0) {
-                                self._index -= 1;
-                                if (self._index < 1){
-                                    self._index = self._lis.length;
-                                }
-                            } else if (self._config.mode === 1) {
-                                self._ol.insertBefore(slideOut, self._lis[0]);
-                                self._index += 1;
-                                if (self._index > self._lis.length){
-                                    self._index = 1;
-                                }
-                            }
-
-                            //清理动画
-                            clearAnimation();
-                            if (self._events["slideend"]) {
-                                self._events["slideend"].forEach(function(func) {
-                                    if(func) {func(self._index, "prev");}
-                                });
-                            }
-                        }, self._config.duration * percent + 80);
-                    } else {
-                        percent = Math.abs(disX) / slideOut.clientWidth;
-                        //还原
-
-                        //设置关键帧动画
-                        frames = setKeyframes(percent, "translateX(" + (-slideIn.clientWidth) + "px) translateZ(0)", "translateX(" + self._config.origin.x + "px) translateZ(0)");
-                        self._aniIn.keyframe(frames.frameIn);
-                        self._aniOut.keyframe(frames.frameOut);
-
-                        //开始动画
-                        startAnimation();
-
-                        time = setTimeout(function() {
-                            //清理动画
-                            if (self._config.mode === 0){
-                                self._ol.insertBefore(slideIn, self._ol.children[0]);
-                            }
-                            clearAnimation();
-                        }, self._config.duration * percent + 80);
+                    if(self._index <= 1){
+                        canPrev = false;
                     }
                 }
-            } else if (self._config.mode === 2 || self._config.mode === 3) {
-                //上下滑动
-                if (disY < 0) {
-                    //下一张图片
-                    if (Math.abs(disY) > slideOut.clientHeight / 2) {
-                        percent = (slideOut.clientHeight - Math.abs(disY)) / slideOut.clientHeight;
-                        //向上滑动
-                        //设置关键帧动画
-                        frames = setKeyframes(percent, "translateY(" + self._config.origin.y + "px) translateZ(0)", "translateY(" + (-slideOut.clientHeight) + "px) translateZ(0)");
-                        self._aniIn.keyframe(frames.frameIn);
-                        self._aniOut.keyframe(frames.frameOut);
+                if (self._config.mode === 0 || self._config.mode === 1) {
+                    offset = self._config.nextSlideOffset < 1 ?  slideOut.clientWidth*self._config.nextSlideOffset:self._config.nextSlideOffset;
+                    //继续判断是否需要切换下一张图片
+                    if (disX < 0) {
+                        can = self._config.mode === 0 ? canNext : canPrev;
+                        //下一张图片
+                        if (Math.abs(disX) > offset) {
+                            percent = (slideOut.clientWidth - Math.abs(disX)) / slideOut.clientWidth;
+                            //向左滑动
+                            //设置关键帧动画
+                            //这里只支持transform
+                            frames = setKeyframes(percent, "translateX(" + self._config.origin.x + "px) translateZ(0)", "translateX(" + (-slideOut.clientWidth) + "px) translateZ(0)");
+                            self._aniIn.keyframe(frames.frameIn);
+                            self._aniOut.keyframe(frames.frameOut);
 
-                        startAnimation();
+                            startAnimation();
 
-                        time = setTimeout(function() {
-                            //动画结束
-                            if (self._config.mode === 2) {
-                                self._ol.insertBefore(slideOut, self._lis[0]);
+                            time = setTimeout(function() {
+                                //动画结束
                                 self._index += 1;
                                 if (self._index > self._lis.length){
-                                    self._index = 1;
-                                }
-                            } else if (self._config.mode === 3) {
-                                self._index -= 1;
-                                if (self._index < 1){
                                     self._index = self._lis.length;
                                 }
-                            }
-                            clearAnimation();
-                            if (self._events["slideend"]) {
-                                self._events["slideend"].forEach(function(func) {
-                                    if(func) {func(self._index, "prev");}
-                                });
-                            }
-                        }, self._config.duration * percent + 80);
-                    } else {
-                        percent = Math.abs(disY) / slideOut.clientHeight;
+                            
+                                //清理动画
+                                clearAnimation();
 
-                        //设置关键帧动画
-                        frames = setKeyframes(percent, "translateY(" + slideIn.clientHeight + "px) translateZ(0)", "translateY(" + self._config.origin.y + "px) translateZ(0)");
-                        self._aniIn.keyframe(frames.frameIn);
-                        self._aniOut.keyframe(frames.frameOut);
+                                if (self._events["slideend"]) {
+                                    self._events["slideend"].forEach(function(func) {
+                                        if(func) {func(self._index, "prev");}
+                                    });
+                                }
+                            }, self._config.duration * percent + 80);
+                        } else {
+                            percent = Math.abs(disX) / slideOut.clientWidth;
+                            //还原
+                            //设置关键帧动画
+                            frames = setKeyframes(percent, "translateX(" +  slideIn.clientWidth + "px) translateZ(0)", "translateX(" + self._config.origin.x + "px) translateZ(0)");
+                            self._aniIn.keyframe(frames.frameIn);
+                            self._aniOut.keyframe(frames.frameOut);
 
-                        startAnimation();
+                            startAnimation();
 
-                        time = setTimeout(function() {
-                            if (self._config.mode === 1){
-                                self._ol.insertBefore(slideIn, self._ol.children[0]);
-                            }
-                            //清理动画
-                            clearAnimation();
-                        }, self._config.duration * percent + 80);
+                            time = setTimeout(function() {
+                                
+                                //清理动画
+                                clearAnimation();
+                            }, self._config.duration * percent + 80);
+                        }
+                    } else if (disX > 0) {
+                        //向右滑动
+                        //下一张图片
+                        can = self._config.mode === 1 ? canNext : canPrev;
+                        if (can && Math.abs(disX) > offset) {
+                            percent = (slideOut.clientWidth - Math.abs(disX)) / slideOut.clientWidth;
+
+                            //设置关键帧动画
+                            frames = setKeyframes(percent, "translateX(" + self._config.origin.x + "px) translateZ(0)", "translateX(" + slideOut.clientWidth + "px) translateZ(0)");
+                            self._aniIn.keyframe(frames.frameIn);
+                            self._aniOut.keyframe(frames.frameOut);
+
+                            //开始动画
+                            startAnimation();
+
+                            time = setTimeout(function() {
+
+                                self._index -= 1;
+                                if (self._index < 1){
+                                    self._index = 1;
+                                }
+                                
+                                //清理动画
+                                clearAnimation();
+                                if (self._events["slideend"]) {
+                                    self._events["slideend"].forEach(function(func) {
+                                        if(func) {func(self._index, "prev");}
+                                    });
+                                }
+                            }, self._config.duration * percent + 80);
+                        } else {
+                            percent = Math.abs(disX) / slideOut.clientWidth;
+                            //还原
+
+                            //设置关键帧动画
+                            frames = setKeyframes(percent, "translateX(" + (-slideIn.clientWidth) + "px) translateZ(0)", "translateX(" + self._config.origin.x + "px) translateZ(0)");
+                            self._aniIn.keyframe(frames.frameIn);
+                            self._aniOut.keyframe(frames.frameOut);
+
+                            //开始动画
+                            startAnimation();
+
+                            time = setTimeout(function() {
+                                //清理动画
+                                
+                                clearAnimation();
+                            }, self._config.duration * percent + 80);
+                        }
                     }
-                } else if (disY > 0) {
-                    //向下滑动
-                    //下一张图片
-                    if (Math.abs(disY) > slideOut.clientHeight / 2) {
-                        percent = (slideOut.clientHeight - Math.abs(disY)) / slideOut.clientHeight;
+                } else if (self._config.mode === 2 || self._config.mode === 3) {
+                    offset = self._config.nextSlideOffset < 1 ?  slideOut.clientHeight*self._config.nextSlideOffset:self._config.nextSlideOffset;
+                    //上下滑动
+                    if (disY < 0) {
+                        can = self._config.mode === 2 ? canNext : canPrev;
+                        //下一张图片
+                        if (can && Math.abs(disY) > offset) {
+                            percent = (slideOut.clientHeight - Math.abs(disY)) / slideOut.clientHeight;
+                            //向上滑动
+                            //设置关键帧动画
+                            frames = setKeyframes(percent, "translateY(" + self._config.origin.y + "px) translateZ(0)", "translateY(" + (-slideOut.clientHeight) + "px) translateZ(0)");
+                            self._aniIn.keyframe(frames.frameIn);
+                            self._aniOut.keyframe(frames.frameOut);
 
-                        //设置关键帧动画
-                        frames = setKeyframes(percent, "translateY(" + self._config.origin.y + "px) translateZ(0)", "translateY(" + slideOut.clientHeight + "px) translateZ(0)");
-                        self._aniIn.keyframe(frames.frameIn);
-                        self._aniOut.keyframe(frames.frameOut);
+                            startAnimation();
 
-                        //开始动画
-                        startAnimation();
-
-                        time = setTimeout(function() {
-                            if (self._config.mode === 2) {
-                                self._index -= 1;
-                                if (self._index < 1){
-                                    self._index = self._lis.length;
-                                }
-                            } else if (self._config.mode === 3) {
-                                self._ol.insertBefore(slideOut, self._lis[0]);
+                            time = setTimeout(function() {
+                                //动画结束
                                 self._index += 1;
                                 if (self._index > self._lis.length){
+                                    self._index = self._lis.length;
+                                }
+                                
+                                clearAnimation();
+                                if (self._events["slideend"]) {
+                                    self._events["slideend"].forEach(function(func) {
+                                        if(func) {func(self._index, "prev");}
+                                    });
+                                }
+                            }, self._config.duration * percent + 80);
+                        } else {
+                            percent = Math.abs(disY) / slideOut.clientHeight;
+
+                            //设置关键帧动画
+                            frames = setKeyframes(percent, "translateY(" + slideIn.clientHeight + "px) translateZ(0)", "translateY(" + self._config.origin.y + "px) translateZ(0)");
+                            self._aniIn.keyframe(frames.frameIn);
+                            self._aniOut.keyframe(frames.frameOut);
+
+                            startAnimation();
+
+                            time = setTimeout(function() {
+                                
+                                //清理动画
+                                clearAnimation();
+                            }, self._config.duration * percent + 80);
+                        }
+                    } else if (disY > 0) {
+                        //向下滑动
+                        can = self._config.mode === 3 ? canNext : canPrev;
+                        //下一张图片
+                        if (can && Math.abs(disY) > offset) {
+                            percent = (slideOut.clientHeight - Math.abs(disY)) / slideOut.clientHeight;
+
+                            //设置关键帧动画
+                            frames = setKeyframes(percent, "translateY(" + self._config.origin.y + "px) translateZ(0)", "translateY(" + slideOut.clientHeight + "px) translateZ(0)");
+                            self._aniIn.keyframe(frames.frameIn);
+                            self._aniOut.keyframe(frames.frameOut);
+
+                            //开始动画
+                            startAnimation();
+
+                            time = setTimeout(function() {
+                                self._index -= 1;
+                                if (self._index < 1){
                                     self._index = 1;
                                 }
-                            }
+                                
+                                //清理动画
+                                clearAnimation();
 
-                            //清理动画
-                            clearAnimation();
+                                if (self._events["slideend"]) {
+                                    self._events["slideend"].forEach(function(func) {
+                                        if(func) {func(self._index, "prev");}
+                                    });
+                                }
+                            }, self._config.duration * percent + 80);
+                        } else {
+                            percent = Math.abs(disY) / slideOut.clientHeight;
+                            //还原
 
-                            if (self._events["slideend"]) {
-                                self._events["slideend"].forEach(function(func) {
-                                    if(func) {func(self._index, "prev");}
-                                });
-                            }
-                        }, self._config.duration * percent + 80);
-                    } else {
-                        percent = Math.abs(disY) / slideOut.clientHeight;
-                        //还原
+                            //设置关键帧动画
+                            frames = setKeyframes(percent, "translateY(" + (-slideIn.clientHeight) + "px) translateZ(0)", "translateY(" + self._config.origin.y + "px) translateZ(0)");
+                            self._aniIn.keyframe(frames.frameIn);
+                            self._aniOut.keyframe(frames.frameOut);
 
-                        //设置关键帧动画
-                        frames = setKeyframes(percent, "translateY(" + (-slideIn.clientHeight) + "px) translateZ(0)", "translateY(" + self._config.origin.y + "px) translateZ(0)");
-                        self._aniIn.keyframe(frames.frameIn);
-                        self._aniOut.keyframe(frames.frameOut);
+                            //开始动画
+                            startAnimation();
 
-                        //开始动画
-                        startAnimation();
-
-                        time = setTimeout(function() {
-                            //清理动画
-                            if (self._config.mode === 2){
-                                self._ol.insertBefore(slideIn, self._ol.children[0]);
-                            }
-                            clearAnimation();
-                        }, self._config.duration * percent + 80);
+                            time = setTimeout(function() {
+                                
+                                clearAnimation();
+                            }, self._config.duration * percent + 80);
+                        }
                     }
                 }
             }

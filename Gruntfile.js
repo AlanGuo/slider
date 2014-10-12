@@ -17,7 +17,7 @@ module.exports = function(grunt) {
         src: 'Gruntfile.js'
       },
       source: {
-        src: ['dist/slider-1.0.js']
+        src: ['src/**/*.js']
       },
       test: {
         src: ['test/**/*.js']
@@ -45,8 +45,8 @@ module.exports = function(grunt) {
         tasks: ['jshint:gruntfile']
       },
       source: {
-        files: '<%= jshint.source.src %>',
-        tasks: [/*, 'nodeunit'*/,'concat','jshint:source','closureCompiler']
+        files: ['<%= jshint.source.src %>','lib/**/*.js'],
+        tasks: ['jshint','concat','closureCompiler']
       },
       test: {
         files: '<%= jshint.test.src %>',
@@ -65,8 +65,9 @@ module.exports = function(grunt) {
           //},
         },
         files: {
-          'dist/slider-1.0.js': 
-          ['src/slider.js','src/slider.touch.js'],
+          'dist/slider-animate-1.0.js': 
+          ['lib/animate-1.1.js','src/slider.js','src/slider.touch.js'],
+          'dist/slider-1.0.js':['src/slider.js','src/slider.touch.js']
         },
       },
     },
@@ -117,7 +118,24 @@ module.exports = function(grunt) {
       },
 
       // any name that describes your task
-      targetName: {
+      sliderAnimate: {
+
+        /**
+         *[OPTIONAL] Here you can add new or override previous option of the Closure Compiler Directives.
+         * IMPORTANT! The feature is enabled as a temporary solution to [#738](https://github.com/gruntjs/grunt/issues/738).
+         * As soon as issue will be fixed this feature will be removed.
+         */
+        TEMPcompilerOpts: {
+        },
+
+        // [OPTIONAL] Target files to compile. Can be a string, an array of strings
+        // or grunt file syntax (<config:...>, *)
+        src: 'dist/slider-animate-1.0.js',
+
+        // [OPTIONAL] set an output file
+        dest: 'dist/slider-animate-1.0.min.js'
+      },
+      slider: {
 
         /**
          *[OPTIONAL] Here you can add new or override previous option of the Closure Compiler Directives.

@@ -62,9 +62,10 @@ sl_slider_ul.innerHTML = jstemplate(liTemplate, {
 
 var sl1 = new Slider(sl_slider_ul, {
     mode: 0,
-    autoPlay: true,
+    autoPlay: false,
     timing: "ease"
 }).touchToSlide();
+
 sl1.on("slideend", function(index) {
     var children = sl_slider_dot_ul_wrapper.children;
     for (var i = 0; i < children.length; i++) {
@@ -81,11 +82,11 @@ sl_mode_selectul.onclick = function(evt) {
         sl_mode_selectul.children[i].className = "";
     }
     target.className = "current";
-    var mode = target.getAttribute("mode");
+    var mode = target.getAttribute("mode")*1;
     
     sl1.changeConfig({
         mode: mode,
-        autoPlay: true,
+        autoPlay: false,
         timing: "ease"
     });
 }
