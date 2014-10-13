@@ -77,33 +77,34 @@ Slider.prototype.touchToSlide = function() {
                 }
                 //这里不关心动画方式，使用transform移动
                 if (slideIn && slideOut) {
+                    var clientWidth = slideIn.clientWidth;
                     //动画在最前
-                    slideIn.style.zIndex = slideOut.style.zIndex = "initial";
+                    slideIn.style.opacity = slideOut.style.opacity = 1;
                     //其他的在后面
                     for(i=0;i<self._lis.length;i++){
                         if(self._lis[i] !== slideIn && self._lis[i] !== slideOut){
-                            self._lis[i].style.zIndex = self._config.zIndex - 1;
+                            self._lis[i].style.opacity = 0;
                         }
                     }
 
                     if (disX > 0) {
                         if (supportTransform) {
                             //transform
-                            slideIn.style[transformCSS] = "translateX(" + parseInt(-slideIn.clientWidth + disX) + "px) translateZ(0)";
+                            slideIn.style[transformCSS] = "translateX(" + parseInt(-clientWidth + disX) + "px) translateZ(0)";
                             slideOut.style[transformCSS] = "translateX(" + parseInt(self._config.origin.x + disX) + "px) translateZ(0)";
                         } else {
                             //left
-                            slideIn.style["left"] = parseInt(-slideIn.clientWidth + disX) + "px";
+                            slideIn.style["left"] = parseInt(-clientWidth + disX) + "px";
                             slideOut.style["left"] = parseInt(self._config.origin.x + disX) + "px";
                         }
                     } else if (disX < 0) {
                         if (supportTransform) {
                             //transform
-                            slideIn.style[transformCSS] = "translateX(" + parseInt(slideIn.clientWidth + disX) + "px) translateZ(0)";
+                            slideIn.style[transformCSS] = "translateX(" + parseInt(clientWidth + disX) + "px) translateZ(0)";
                             slideOut.style[transformCSS] = "translateX(" + parseInt(self._config.origin.x + disX) + "px) translateZ(0)";
                         } else {
                             //left
-                            slideIn.style["left"] = (slideIn.clientWidth + disX) + "px";
+                            slideIn.style["left"] = (clientWidth + disX) + "px";
                             slideOut.style["left"] = (self._config.origin.x + disX) + "px";
                         }
                     }
@@ -122,19 +123,19 @@ Slider.prototype.touchToSlide = function() {
                 }
                 
                 if (slideIn && slideOut) {
-
-                    slideIn.style.zIndex = slideOut.style.zIndex = "initial";
+                    var clientHeight = slideIn.clientHeight;
+                    slideIn.style.opacity = slideOut.style.opacity = 1;
                     //其他的在后面
                     for(i=0;i<self._lis.length;i++){
                         if(self._lis[i] !== slideIn && self._lis[i] !== slideOut){
-                            self._lis[i].style.zIndex = self._config.zIndex - 1;
+                            self._lis[i].style.opacity = 0;
                         }
                     }
 
                     
                     if (disY > 0) {
                         if (supportTransform) {
-                            slideIn.style[transformCSS] = "translateY(" + parseInt(-slideIn.clientHeight + disY) + "px) translateZ(0)";
+                            slideIn.style[transformCSS] = "translateY(" + parseInt(-clientHeight + disY) + "px) translateZ(0)";
                             slideOut.style[transformCSS] = "translateY(" + parseInt(self._config.origin.y + disY) + "px) translateZ(0)";
                         } else {
                             slideIn.style["left"] = parseInt(-slideIn.clientHeight + disY) + "px";
@@ -142,19 +143,19 @@ Slider.prototype.touchToSlide = function() {
                         }
                     } else if (disY < 0) {
                         if (supportTransform) {
-                            slideIn.style[transformCSS] = "translateY(" + parseInt(slideIn.clientHeight + disY) + "px) translateZ(0)";
+                            slideIn.style[transformCSS] = "translateY(" + parseInt(clientHeight + disY) + "px) translateZ(0)";
                             slideOut.style[transformCSS] = "translateY(" + parseInt(self._config.origin.y + disY) + "px) translateZ(0)";
                         } else {
-                            slideIn.style["left"] = parseInt(slideIn.clientHeight + disY) + "px";
+                            slideIn.style["left"] = parseInt(clientHeight + disY) + "px";
                             slideOut.style["left"] = parseInt(self._config.origin.y + disY) + "px";
                         }
                     }
                 }
-            } else if (self._config.mode === 5 || self._config.mode === 6) {
+            }/* else if (self._config.mode === 5 || self._config.mode === 6) {
                 //上下翻转
             } else if (self._config.mode === 7 || self._config.mode === 8) {
                 //左右翻转
-            }
+            }*/
         }
     };
 
@@ -367,7 +368,6 @@ Slider.prototype.touchToSlide = function() {
 
                             time = setTimeout(function() {
                                 //清理动画
-                                
                                 clearAnimation();
                             }, self._config.duration * percent + 80);
                         }

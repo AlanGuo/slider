@@ -98,10 +98,7 @@ var Slider = (function() {
     });
 
     var transformCSS = prefixCSS("transform",transformJudgeFunc);
-
     var supportTransform = createJudgeFunc()===false?false:true;
-
-
     var frameIn1,frameIn2,frameOut1,frameOut2;
     var _modeFunc = {
         0: function(slideIn, slideOut) {
@@ -158,7 +155,6 @@ var Slider = (function() {
                     point: this._config.duration
                 };
                 frameIn2[transformCSS] = "translateX(" + this._config.origin.x + "px) translateZ(0)";
-
 
                 frameOut1 = {
                     point: 0
@@ -300,7 +296,7 @@ var Slider = (function() {
         },
 
         5: function(slideIn, slideOut) {
-            var tranlate = slideOut.clientHeight / 2;
+            var translate = slideOut.clientHeight / 2;
             //3d变化的时候设置父元素属性
             if (this._config.mode === 5 || this._config.mode === 6) {
                 //3d变化
@@ -313,27 +309,27 @@ var Slider = (function() {
             frameIn1 = {
                 point: 0
             };
-            frameIn1[transformCSS] = "rotateX(90deg) translateZ(" + tranlate + "px)";
+            frameIn1[transformCSS] = "rotateX(90deg) translateZ(" + translate + "px)";
             frameIn2 = {
                 point: this._config.duration
             };
-            frameIn2[transformCSS] = "rotateX(0deg) translateZ(" + tranlate + "px)";
+            frameIn2[transformCSS] = "rotateX(0deg) translateZ(" + translate + "px)";
             this._aniIn.keyframe([frameIn1, frameIn2]);
 
 
             frameOut1 = {
                 point: 0
             };
-            frameOut1[transformCSS] = "rotateX(0deg) translateZ(" + tranlate + "px)";
+            frameOut1[transformCSS] = "rotateX(0deg) translateZ(" + translate + "px)";
             frameOut2 = {
                 point: this._config.duration
             };
-            frameOut2[transformCSS] = "rotateX(-90deg) translateZ(" + tranlate + "px)";
+            frameOut2[transformCSS] = "rotateX(-90deg) translateZ(" + translate + "px)";
             this._aniOut.keyframe([frameOut1, frameOut2]);
         },
 
         6: function(slideIn, slideOut) {
-            var tranlate = slideOut.clientHeight / 2;
+            var translate = slideOut.clientHeight / 2;
             //3d变化的时候设置父元素属性
             if (this._config.mode === 5 || this._config.mode === 6) {
                 //3d变化
@@ -346,22 +342,22 @@ var Slider = (function() {
             frameIn1 = {
                 point: 0
             };
-            frameIn1[transformCSS] = "rotateX(-90deg) translateZ(" + tranlate + "px)";
+            frameIn1[transformCSS] = "rotateX(-90deg) translateZ(" + translate + "px)";
             frameIn2 = {
                 point: this._config.duration
             };
-            frameIn2[transformCSS] = "rotateX(0deg) translateZ(" + tranlate + "px)";
+            frameIn2[transformCSS] = "rotateX(0deg) translateZ(" + translate + "px)";
             this._aniIn.keyframe([frameIn1, frameIn2]);
 
 
             frameOut1 = {
                 point: 0
             };
-            frameOut1[transformCSS] = "rotateX(0deg) translateZ(" + tranlate + "px)";
+            frameOut1[transformCSS] = "rotateX(0deg) translateZ(" + translate + "px)";
             frameOut2 = {
                 point: this._config.duration
             };
-            frameOut2[transformCSS] = "rotateX(90deg) translateZ(" + tranlate + "px)";
+            frameOut2[transformCSS] = "rotateX(90deg) translateZ(" + translate + "px)";
             this._aniOut.keyframe([frameOut1, frameOut2]);
         }
     };
@@ -387,12 +383,7 @@ var Slider = (function() {
         if(this._config.repeat && this._index === this._lis.length){
             slideIn = this._lis[this._lis.length - 1];
         }
-        /*
-        var slideOutArray = new Array(dis);
-        for (var i = 0; i < dis; i++) {
-            slideOutArray[i] = this._lis[this._lis.length - i - this._index];
-        }
-        */
+
         var slideOut = this._lis[this._lis.length - this._index];
         var _self = this;
 
@@ -401,26 +392,19 @@ var Slider = (function() {
             this._aniIn.setElement(slideIn);
             this._aniOut.setElement(slideOut);
 
-            //设置关键帧动画
-            this._aniIn.reset();
-            this._aniOut.reset();
-            if (!this._aniIn.keyframes.length) {
-                func.call(this, slideIn, slideOut);
-            }
+            //清空关键帧
+            this._aniIn.resetKeyFrames();
+            this._aniOut.resetKeyFrames();
 
-            //隐藏不可见的li
-            /*
-            for (i = 1; i < slideOutArray.length; i++) {
-                slideOutArray[i].style.display = "none";
-            }
-            */
+            //设置关键帧动画
+            func.call(this, slideIn, slideOut);
 
             //动画在最前
-            slideIn.style.zIndex = slideOut.style.zIndex = "initial";
+            slideIn.style.opacity = slideOut.style.opacity = 1;
             //其他的在后面
             for(var i=0;i<this._lis.length;i++){
                 if(this._lis[i] !== slideIn && this._lis[i] !== slideOut){
-                    this._lis[i].style.zIndex = this._config.zIndex - 1;
+                    this._lis[i].style.opacity = 0;
                 }
             }
 
@@ -436,19 +420,12 @@ var Slider = (function() {
             this._isSliding = true;
             var time = setTimeout(function() {
                 _self._isSliding = false;
-                //插入到第一个
-                //略微延时(80)去处理li
-                /*
-                for (var i = 0; i < slideOutArray.length; i++) {
-                    //显示刚才隐藏的li
-                    slideOutArray[i].style.display = "block";
-                }
-                */
+
+                clearTimeout(time);
 
                 _self._aniIn.reset();
                 _self._aniOut.reset();
 
-                clearTimeout(time);
                 _self._index += dis;
                 if (_self._index > _self._lis.length){
                     _self._index = 1;
@@ -484,7 +461,6 @@ var Slider = (function() {
         //透视之后缩放的比例，默认是一，
         //一般情况下透视之后图形会比原来要大，这里需要调整一下缩放，一般情况下此值为小于1的数如0.88
         config.scale = options.scale || 1;
-        config.zIndex = options.zIndex || 0;
         var origin = options.origin || {};
         var x = origin.x || 0,
             y = origin.y || 0;
@@ -546,13 +522,6 @@ var Slider = (function() {
         var mode = _oppositeMode[this._config.mode];
         var func = _modeFunc[mode];
         //从末尾取图片
-        //多个图片需要前插
-        /*
-        var slideInArray = new Array(dis);
-        for (var i = 0; i < dis; i++) {
-            slideInArray[i] = this._lis[this._lis.length - this._index + i];
-        }
-        */
         var slideIn = this._lis[this._lis.length - this._index + dis];
         //从头开始
         if(this._config.repeat && this._index === 1){
@@ -562,29 +531,22 @@ var Slider = (function() {
         var slideOut = this._lis[this._lis.length - this._index];
 
         if (slideIn && slideOut) {
-            /*
-            //加在最顶层
-            for (i = 0; i < slideInArray.length; i++) {
-                //不影响动画的暂时隐藏
-                if (i < slideInArray.length - 1) {
-                    slideInArray[i].style.display = "none";
-                }
-            }
-            */
             //动画在最前
-            slideIn.style.zIndex = slideOut.style.zIndex = "initial";
+            slideIn.style.opacity = slideOut.style.opacity = 1;
             //其他的在后面
             for(var i=0;i<this._lis.length;i++){
                 if(this._lis[i] !== slideIn && this._lis[i] !== slideOut){
-                    this._lis[i].style.zIndex = this._config.zIndex - 1;
+                    this._lis[i].style.opacity = 0;
                 }
             }
 
             this._aniIn.setElement(slideIn);
             this._aniOut.setElement(slideOut);
 
-            this._aniIn.reset();
-            this._aniOut.reset();
+            //清空关键帧
+            this._aniIn.resetKeyFrames();
+            this._aniOut.resetKeyFrames();
+
             func.call(this, slideIn, slideOut);
 
             this._aniIn.start({
@@ -597,12 +559,7 @@ var Slider = (function() {
             this._isSliding = true;
             var time = setTimeout(function() {
                 _self._isSliding = false;
-                /*
-                for (var i = 0; i < slideInArray.length; i++) {
-                    //恢复显示
-                    slideInArray[i].style.display = "block";
-                }
-                */
+
                 clearTimeout(time);
 
                 _self._aniIn.reset();
@@ -805,7 +762,16 @@ var Slider = (function() {
     sliderProto.changeConfig = function(options) {
         this.pause();
         this._config = setOptions(options);
-        //this._destroyStyle();
+        this._destroyStyle();
+        for (var i = 0; i < this._lis.length; i++) {
+            //设置zIndex确保显示不会乱掉
+            if(this._index === this._lis.length-i){
+                this._lis[i].style.zIndex = 'initial';
+            }
+            else{
+                this._lis[i].style.zIndex = this._config.zIndex - 1;
+            }
+        }
         return this;
     };
 
@@ -825,6 +791,7 @@ var Slider = (function() {
         if (this._aniOut.elem){
             this._aniOut.clear().reset();
         }
+        
         //清除动画样式
         for (var i = 0; i < this._lis.length; i++) {
             this._lis[i].removeAttribute("style");
