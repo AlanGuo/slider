@@ -78,12 +78,10 @@ Slider.prototype.touchToSlide = function() {
                 //这里不关心动画方式，使用transform移动
                 if (slideIn && slideOut) {
                     var clientWidth = slideIn.clientWidth;
-                    //动画在最前
-                    slideIn.style.opacity = slideOut.style.opacity = 1;
-                    //其他的在后面
+                    //把非动画的移出区域之外，这样不用改变dom结构，性能最好
                     for(i=0;i<self._lis.length;i++){
                         if(self._lis[i] !== slideIn && self._lis[i] !== slideOut){
-                            self._lis[i].style.opacity = 0;
+                            self._lis[i].style[transformCSS] = "translateX("+clientWidth+"px)translateZ(0)";
                         }
                     }
 
@@ -368,6 +366,7 @@ Slider.prototype.touchToSlide = function() {
 
                             time = setTimeout(function() {
                                 //清理动画
+                                
                                 clearAnimation();
                             }, self._config.duration * percent + 80);
                         }
