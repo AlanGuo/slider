@@ -400,11 +400,11 @@ var Slider = (function() {
             func.call(this, slideIn, slideOut);
 
             //动画在最前
-            slideIn.style.opacity = slideOut.style.opacity = 1;
+            slideIn.style.visibility = slideOut.style.visibility = "visible";
             //其他的在后面
             for(var i=0;i<this._lis.length;i++){
                 if(this._lis[i] !== slideIn && this._lis[i] !== slideOut){
-                    this._lis[i].style.opacity = 0;
+                    this._lis[i].style.visibility = "hidden";
                 }
             }
 
@@ -532,11 +532,11 @@ var Slider = (function() {
 
         if (slideIn && slideOut) {
             //动画在最前
-            slideIn.style.opacity = slideOut.style.opacity = 1;
+            slideIn.style.visibility = slideOut.style.visibility = "visible";
             //其他的在后面
             for(var i=0;i<this._lis.length;i++){
                 if(this._lis[i] !== slideIn && this._lis[i] !== slideOut){
-                    this._lis[i].style.opacity = 0;
+                    this._lis[i].style.visibility = "hidden";
                 }
             }
 
@@ -766,10 +766,10 @@ var Slider = (function() {
         for (var i = 0; i < this._lis.length; i++) {
             //设置zIndex确保显示不会乱掉
             if(this._index === this._lis.length-i){
-                this._lis[i].style.zIndex = 'initial';
+                this._lis[i].style.visibility = "visible";
             }
             else{
-                this._lis[i].style.zIndex = this._config.zIndex - 1;
+                this._lis[i].style.visibility = "hidden";
             }
         }
         return this;

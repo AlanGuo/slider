@@ -78,12 +78,14 @@ Slider.prototype.touchToSlide = function() {
                 //这里不关心动画方式，使用transform移动
                 if (slideIn && slideOut) {
                     var clientWidth = slideIn.clientWidth;
-                    //把非动画的移出区域之外，这样不用改变dom结构，性能最好
+                    slideIn.style.visibility = slideOut.style.visibility = "visible";
+                    //其他的在后面
                     for(i=0;i<self._lis.length;i++){
                         if(self._lis[i] !== slideIn && self._lis[i] !== slideOut){
-                            self._lis[i].style[transformCSS] = "translateX("+clientWidth+"px)translateZ(0)";
+                            self._lis[i].style.visibility = "hidden";
                         }
                     }
+
 
                     if (disX > 0) {
                         if (supportTransform) {
@@ -122,11 +124,11 @@ Slider.prototype.touchToSlide = function() {
                 
                 if (slideIn && slideOut) {
                     var clientHeight = slideIn.clientHeight;
-                    slideIn.style.opacity = slideOut.style.opacity = 1;
+                    slideIn.style.visibility = slideOut.style.visibility = "visible";
                     //其他的在后面
                     for(i=0;i<self._lis.length;i++){
                         if(self._lis[i] !== slideIn && self._lis[i] !== slideOut){
-                            self._lis[i].style.opacity = 0;
+                            self._lis[i].style.visibility = "hidden";
                         }
                     }
 
