@@ -26,6 +26,13 @@
 			height: 100%;
 			width: 100%;
 		}
+		.sl_slider_ul_inner{
+			margin: 0;
+			padding: 0;
+			list-style: none;
+			height: 100%;
+			width: 100%;
+		}
 		.sl_slider_controller{
 			width: 40px;
 			height: 80px;
@@ -191,7 +198,8 @@
 </head>
 <body>
 	<section>
-		<ul class="sl_slider_ul" id="sl_slider_ul">
+		<ul class="sl_slider_ul">
+			<ul class="sl_slider_ul_inner" id="sl_slider_ul"></ul>
 		</ul>
 		<div class="sl_slider_left sl_slider_controller" id="sl_slider_left"><</div>
 		<div class="sl_slider_right sl_slider_controller" id="sl_slider_right">></div>

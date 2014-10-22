@@ -80,7 +80,6 @@ var Slider = (function() {
                     return v[i].substr(0, v[i].length - 1);
                 }
             }
-
             return false;
         };
     };
@@ -101,180 +100,152 @@ var Slider = (function() {
     var supportTransform = createJudgeFunc()===false?false:true;
     var frameIn1,frameIn2,frameOut1,frameOut2;
     var _modeFunc = {
-        0: function(slideIn, slideOut) {
+        0: function(ol,index,dis) {
+            var length = ol.children.length;
+            var width = ol.children[0].clientWidth;
+
+            if(index === length){
+                //移动图片
+                ol.children[0].style[transformCSS] = "translateX("+width*length+"px) translateZ(0)";
+            }
+            else if(index === 1){
+                for(var i=0;i<length;i++){
+                    ol.children[i].style[transformCSS] = "translateX("+width*i+"px) translateZ(0)";
+                }
+            }
             if (supportTransform) {
                 //transform
                 frameIn1 = {
                     point: 0
                 };
-                frameIn1[transformCSS] = "translateX(" + slideIn.clientWidth + "px) translateZ(0)";
+                frameIn1[transformCSS] = "translateX(" + width*(1-index) + "px) translateZ(0)";
                 frameIn2 = {
                     point: this._config.duration
                 };
-                frameIn2[transformCSS] = "translateX(" + this._config.origin.x + "px) translateZ(0)";
-
-                frameOut1 = {
-                    point: 0
-                };
-                frameOut1[transformCSS] = "translateX(" + this._config.origin.x + "px) translateZ(0)";
-                frameOut2 = {
-                    point: this._config.duration
-                };
-                frameOut2[transformCSS] = "translateX(" + (-slideOut.clientWidth) + "px) translateZ(0)";
+                frameIn2[transformCSS] = "translateX(" + width*(-index-dis+1) + "px) translateZ(0)";
             } else {
                 //left
                 frameIn1 = {
                     point: 0,
-                    left: slideIn.clientWidth + "px"
+                    left: width*(1-index) + "px"
                 };
                 frameIn2 = {
                     point: this._config.duration,
-                    left: this._config.origin.x + "px"
-                };
-
-                frameOut1 = {
-                    point: 0,
-                    left: this._config.origin.x + "px"
-                };
-                frameOut2 = {
-                    point: this._config.duration,
-                    left: -slideOut.clientWidth + "px"
+                    left: width*(-index-dis+1) + "px"
                 };
             }
             this._aniIn.keyframe([frameIn1, frameIn2]);
-            this._aniOut.keyframe([frameOut1, frameOut2]);
         },
 
-        1: function(slideIn, slideOut) {
+        1: function(ol, index, dis) {
+            var length = ol.children.length;
+            var width = ol.children[0].clientWidth;
+
+            if(index === 1){
+                //移动图片
+                ol.children[length-1].style[transformCSS] = "translateX("+(-width)+"px) translateZ(0)";
+            }
+            else if(index === length){
+                for(var i=0;i<length;i++){
+                    ol.children[i].style[transformCSS] = "translateX("+width*i+"px) translateZ(0)";
+                }
+            }
             if (supportTransform) {
+                //transform
                 frameIn1 = {
                     point: 0
                 };
-                frameIn1[transformCSS] = "translateX(" + (-slideIn.clientWidth) + "px) translateZ(0)";
+                frameIn1[transformCSS] = "translateX(" + width*(1-index) + "px) translateZ(0)";
                 frameIn2 = {
                     point: this._config.duration
                 };
-                frameIn2[transformCSS] = "translateX(" + this._config.origin.x + "px) translateZ(0)";
-
-                frameOut1 = {
-                    point: 0
-                };
-                frameOut1[transformCSS] = "translateX(" + this._config.origin.x + "px) translateZ(0)";
-                frameOut2 = {
-                    point: this._config.duration
-                };
-                frameOut2[transformCSS] = "translateX(" + slideOut.clientWidth + "px) translateZ(0)";
-
+                frameIn2[transformCSS] = "translateX(" + width*(dis+1-index) + "px) translateZ(0)";
             } else {
+                //left
                 frameIn1 = {
                     point: 0,
-                    left: -slideIn.clientWidth + "px"
+                    left: width*(1-index) + "px"
                 };
                 frameIn2 = {
                     point: this._config.duration,
-                    left: this._config.origin.x + "px"
-                };
-
-                frameOut1 = {
-                    point: 0,
-                    left: this._config.origin.x + "px"
-                };
-                frameOut2 = {
-                    point: this._config.duration,
-                    left: slideOut.clientWidth + "px"
+                    left: width*(dis+1-index) + "px"
                 };
             }
             this._aniIn.keyframe([frameIn1, frameIn2]);
-            this._aniOut.keyframe([frameOut1, frameOut2]);
         },
 
-        2: function(slideIn, slideOut) {
+        2: function(ol, index, dis) {
+            var length = ol.children.length;
+            var height = ol.children[0].clientHeight;
+
+            if(index === length){
+                //移动图片
+                ol.children[0].style[transformCSS] = "translateY("+height*length+"px) translateZ(0)";
+            }
+            else if(index === 1){
+                for(var i=0;i<length;i++){
+                    ol.children[i].style[transformCSS] = "translateY("+height*i+"px) translateZ(0)";
+                }
+            }
             if (supportTransform) {
+                //transform
                 frameIn1 = {
                     point: 0
                 };
-                frameIn1[transformCSS] = "translateY(" + slideIn.clientHeight + "px) translateZ(0)";
+                frameIn1[transformCSS] = "translateY(" + height*(1-index) + "px) translateZ(0)";
                 frameIn2 = {
                     point: this._config.duration
                 };
-                frameIn2[transformCSS] = "translateY(" + this._config.origin.y + "px) translateZ(0)";
-
-                frameOut1 = {
-                    point: 0
-                };
-                frameOut1[transformCSS] = "translateY(" + this._config.origin.y + "px) translateZ(0)";
-                frameOut2 = {
-                    point: this._config.duration
-                };
-                frameOut2[transformCSS] = "translateY(" + (-slideOut.clientHeight) + "px) translateZ(0)";
-
+                frameIn2[transformCSS] = "translateY(" + height*(-index-dis+1) + "px) translateZ(0)";
             } else {
-                //top
+                //left
                 frameIn1 = {
                     point: 0,
-                    top: slideIn.clientHeight + "px"
+                    left: height*(1-index) + "px"
                 };
                 frameIn2 = {
                     point: this._config.duration,
-                    top: this._config.origin.y + "px"
-                };
-
-                frameOut1 = {
-                    point: 0,
-                    top: this._config.origin.y + "px"
-                };
-                frameOut2 = {
-                    point: this._config.duration,
-                    top: -slideOut.clientHeight + "px"
+                    left: height*(-index) + "px"
                 };
             }
-
             this._aniIn.keyframe([frameIn1, frameIn2]);
-            this._aniOut.keyframe([frameOut1, frameOut2]);
         },
 
-        3: function(slideIn, slideOut) {
+        3: function(ol, index,dis) {
+            var length = ol.children.length;
+            var height = ol.children[0].clientHeight;
+
+            if(index === 1){
+                //移动图片
+                ol.children[length-1].style[transformCSS] = "translateY("+(-height)+"px) translateZ(0)";
+            }
+            else if(index === length){
+                for(var i=0;i<length;i++){
+                    ol.children[i].style[transformCSS] = "translateY("+height*i+"px) translateZ(0)";
+                }
+            }
             if (supportTransform) {
+                //transform
                 frameIn1 = {
                     point: 0
                 };
-                frameIn1[transformCSS] = "translateY(" + (-slideIn.clientHeight) + "px) translateZ(0)";
+                frameIn1[transformCSS] = "translateY(" + height*(1-index) + "px) translateZ(0)";
                 frameIn2 = {
                     point: this._config.duration
                 };
-                frameIn2[transformCSS] = "translateY(" + this._config.origin.y + "px) translateZ(0)";
-
-                frameOut1 = {
-                    point: 0
-                };
-                frameOut1[transformCSS] = "translateY(" + this._config.origin.y + "px) translateZ(0)";
-                frameOut2 = {
-                    point: this._config.duration
-                };
-                frameOut2[transformCSS] = "translateY(" + slideOut.clientHeight + "px) translateZ(0)";
+                frameIn2[transformCSS] = "translateY(" + height*(dis+1-index) + "px) translateZ(0)";
             } else {
-                //top
+                //left
                 frameIn1 = {
                     point: 0,
-                    top: -slideIn.clientHeight + "px"
+                    left: height*(1-index) + "px"
                 };
                 frameIn2 = {
                     point: this._config.duration,
-                    top: this._config.origin.y + "px"
-                };
-
-                frameOut1 = {
-                    point: 0,
-                    top: this._config.origin.y + "px"
-                };
-                frameOut2 = {
-                    point: this._config.duration,
-                    top: slideOut.clientHeight + "px"
+                    left: height*(2-index) + "px"
                 };
             }
-
             this._aniIn.keyframe([frameIn1, frameIn2]);
-            this._aniOut.keyframe([frameOut1, frameOut2]);
         },
 
         4: function() {
@@ -377,37 +348,48 @@ var Slider = (function() {
         if (this._isSliding) {return this;}
         dis = dis || 1;
         var func = _modeFunc[this._config.mode];
+        var slideIn = null, slideOut = null;
 
-        var slideIn = this._lis[this._lis.length - dis - this._index];
-        //从头开始
-        if(this._config.repeat && this._index === this._lis.length){
-            slideIn = this._lis[this._lis.length - 1];
+        if(this._config.mode < 4){
+            //移动ul
+            slideIn = this._ol;
         }
-
-        var slideOut = this._lis[this._lis.length - this._index];
-        var _self = this;
-
-        if (slideIn && slideOut) {
-            //需要两个元素切换
-            this._aniIn.setElement(slideIn);
-            this._aniOut.setElement(slideOut);
-
-            //清空关键帧
-            this._aniIn.resetKeyFrames();
-            this._aniOut.resetKeyFrames();
-
-            //设置关键帧动画
-            func.call(this, slideIn, slideOut);
-
-            //动画在最前
-            slideIn.style.visibility = slideOut.style.visibility = "visible";
-            //其他的在后面
-            for(var i=0;i<this._lis.length;i++){
-                if(this._lis[i] !== slideIn && this._lis[i] !== slideOut){
-                    this._lis[i].style.visibility = "hidden";
-                }
+        else{
+            //移动li
+            slideIn = this._lis[this._lis.length - dis - this._index];
+            //从头开始
+            if(this._config.repeat && this._index === this._lis.length){
+                slideIn = this._lis[this._lis.length - 1];
             }
 
+            slideOut = this._lis[this._lis.length - this._index];
+        }
+        
+        var _self = this;
+
+        if (slideIn) {
+            this._aniIn.setElement(slideIn);
+            //清空关键帧
+            this._aniIn.resetKeyFrames();
+            //需要两个元素切换
+            if(slideOut){
+                this._aniOut.setElement(slideOut);
+                this._aniOut.resetKeyFrames();
+
+                func.call(this, slideIn, slideOut);
+            
+                //动画在最前
+                slideIn.style.visibility = slideOut.style.visibility = "visible";
+                //其他的在后面
+                for(var i=0;i<this._lis.length;i++){
+                    if(this._lis[i] !== slideIn && this._lis[i] !== slideOut){
+                        this._lis[i].style.visibility = "hidden";
+                    }
+                }
+            }else{
+                func.call(this, slideIn, this._index, dis);
+            }
+            
             //可见的li开始动画
             this._aniIn.start({
                 timing: this._config.timing
@@ -416,7 +398,6 @@ var Slider = (function() {
                 timing: this._config.timing
             });
 
-
             this._isSliding = true;
             var time = setTimeout(function() {
                 _self._isSliding = false;
@@ -424,7 +405,10 @@ var Slider = (function() {
                 clearTimeout(time);
 
                 _self._aniIn.reset();
-                _self._aniOut.reset();
+
+                if(slideOut){
+                    _self._aniOut.reset();
+                }
 
                 _self._index += dis;
                 if (_self._index > _self._lis.length){
@@ -471,6 +455,42 @@ var Slider = (function() {
         return config;
     };
 
+
+    var preProcess = function(config,ol){
+        var lis = ol.children;
+        var clientWidth = ol.clientWidth;
+        var clientHeight = ol.clientHeight;
+        var i = 0;
+
+        if(config.mode < 4){
+            if(config.mode === 0 || config.mode === 1){
+                //左右排列
+                for(i=0;i<lis.length;i++){
+                    lis[i].style[transformCSS] = "translateX("+(i*clientWidth)+"px) translateZ(0)";
+                    lis[i].style.width = clientWidth + "px";
+                    lis[i].style.height = ol.style.height = "100%";
+                }
+                ol.style.width = clientWidth*lis.length+"px";
+
+            }else{
+                //上下排列
+                for(i=0;i<lis.length;i++){
+                    lis[i].style[transformCSS] = "translateY("+(i*clientHeight)+"px) translateZ(0)";
+                    lis[i].style.height = clientHeight + "px";
+                    lis[i].style.width = ol.style.width = "100%";
+                }
+                ol.style.height = clientHeight*lis.length+"px";
+            }
+            ol.style[transformCSS] = "translateZ(0)";
+        }
+        else{
+            for(i=0;i<lis.length;i++){
+                lis[i].removeAttribute("style");
+            }
+            ol.removeAttribute("style");
+        }
+    };
+
     /**
      * Slider
      * @class Slider
@@ -495,7 +515,9 @@ var Slider = (function() {
         this._aniIn = new window.Animate();
         this.isPaused = false;
 
-        if (this._config.autoPlay !== false) {
+        //预处理
+        preProcess(this._config,this._ol);
+        if(this._config.autoPlay !== false) {
             this.play();
         }
     }
@@ -521,16 +543,21 @@ var Slider = (function() {
         var _self = this;
         var mode = _oppositeMode[this._config.mode];
         var func = _modeFunc[mode];
-        //从末尾取图片
-        var slideIn = this._lis[this._lis.length - this._index + dis];
-        //从头开始
-        if(this._config.repeat && this._index === 1){
-            slideIn = this._lis[0];
+        var slideIn = null, slideOut = null;
+
+        if(this._config.mode < 4){
+            slideIn = this._ol;
         }
+        else{
+            //从末尾取图片
+            slideIn = this._lis[this._lis.length - this._index + dis];
+            //从头开始
+            if(this._config.repeat && this._index === 1){
+                slideIn = this._lis[0];
+            }
 
-        var slideOut = this._lis[this._lis.length - this._index];
+            slideOut = this._lis[this._lis.length - this._index];
 
-        if (slideIn && slideOut) {
             //动画在最前
             slideIn.style.visibility = slideOut.style.visibility = "visible";
             //其他的在后面
@@ -539,23 +566,29 @@ var Slider = (function() {
                     this._lis[i].style.visibility = "hidden";
                 }
             }
-
+        }
+        
+        if (slideIn) {
             this._aniIn.setElement(slideIn);
-            this._aniOut.setElement(slideOut);
-
             //清空关键帧
             this._aniIn.resetKeyFrames();
-            this._aniOut.resetKeyFrames();
-
-            func.call(this, slideIn, slideOut);
-
+            
+            if(slideOut){
+                this._aniOut.setElement(slideOut);
+                this._aniOut.resetKeyFrames();
+                func.call(this, slideIn, slideOut);
+                
+            }
+            else{
+                func.call(this, slideIn, this._index, dis);
+            }
             this._aniIn.start({
                 timing: this._config.timing
             });
             this._aniOut.start({
                 timing: this._config.timing
             });
-
+            
             this._isSliding = true;
             var time = setTimeout(function() {
                 _self._isSliding = false;
@@ -563,7 +596,9 @@ var Slider = (function() {
                 clearTimeout(time);
 
                 _self._aniIn.reset();
-                _self._aniOut.reset();
+                if(slideOut){
+                    _self._aniOut.reset();
+                }
 
                 _self._index -= dis;
                 if (_self._index < 1){
@@ -763,15 +798,8 @@ var Slider = (function() {
         this.pause();
         this._config = setOptions(options);
         this._destroyStyle();
-        for (var i = 0; i < this._lis.length; i++) {
-            //设置zIndex确保显示不会乱掉
-            if(this._index === this._lis.length-i){
-                this._lis[i].style.visibility = "visible";
-            }
-            else{
-                this._lis[i].style.visibility = "hidden";
-            }
-        }
+        preProcess(this._config,this._ol);
+        this._index = 1;
         return this;
     };
 
@@ -834,18 +862,6 @@ var Slider = (function() {
      */
     sliderProto._prefixCSS = function(style,judgeFunc) {
         return prefixCSS(style,judgeFunc);
-    };
-
-    /**
-     * 判断是否支持样式
-     * @method _supportTransform
-     * @private
-     * @return {Object} Slider
-     * @support ie:>=6,chrome:all,firefox:all,safari:all,opera:all
-     * @for Slider
-     */
-    sliderProto._supportTransform = function() {
-        return transformJudgeFunc();
     };
 
     return slider;

@@ -89,6 +89,12 @@ sl_mode_selectul.onclick = function(evt) {
         autoPlay: false,
         timing: "ease"
     });
+
+    var children = sl_slider_dot_ul_wrapper.children;
+    for (var i = 0; i < children.length; i++) {
+        children[i].className = "";
+    }
+    children[0].className = "current";
 }
 
 sl_slider_left.onclick = function() {
