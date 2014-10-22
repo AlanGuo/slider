@@ -103,13 +103,16 @@ var Slider = (function() {
         0: function(ol,index,dis) {
             var length = ol.children.length;
             var width = ol.children[0].clientWidth;
-
+            var i = 0;
             if(index === length){
                 //移动图片
+                for(i=0;i<length;i++){
+                    ol.children[i].style[transformCSS] = "translateX("+width*i+"px) translateZ(0)";
+                }
                 ol.children[0].style[transformCSS] = "translateX("+width*length+"px) translateZ(0)";
             }
             else if(index === 1){
-                for(var i=0;i<length;i++){
+                for(i=0;i<length;i++){
                     ol.children[i].style[transformCSS] = "translateX("+width*i+"px) translateZ(0)";
                 }
             }
@@ -140,13 +143,16 @@ var Slider = (function() {
         1: function(ol, index, dis) {
             var length = ol.children.length;
             var width = ol.children[0].clientWidth;
-
+            var i = 0;
             if(index === 1){
                 //移动图片
+                for(i=0;i<length;i++){
+                    ol.children[i].style[transformCSS] = "translateX("+width*i+"px) translateZ(0)";
+                }
                 ol.children[length-1].style[transformCSS] = "translateX("+(-width)+"px) translateZ(0)";
             }
             else if(index === length){
-                for(var i=0;i<length;i++){
+                for(i=0;i<length;i++){
                     ol.children[i].style[transformCSS] = "translateX("+width*i+"px) translateZ(0)";
                 }
             }
@@ -177,13 +183,17 @@ var Slider = (function() {
         2: function(ol, index, dis) {
             var length = ol.children.length;
             var height = ol.children[0].clientHeight;
+            var i=0;
 
             if(index === length){
+                for(i=0;i<length;i++){
+                    ol.children[i].style[transformCSS] = "translateY("+height*i+"px) translateZ(0)";
+                }
                 //移动图片
                 ol.children[0].style[transformCSS] = "translateY("+height*length+"px) translateZ(0)";
             }
             else if(index === 1){
-                for(var i=0;i<length;i++){
+                for(i=0;i<length;i++){
                     ol.children[i].style[transformCSS] = "translateY("+height*i+"px) translateZ(0)";
                 }
             }
@@ -214,13 +224,17 @@ var Slider = (function() {
         3: function(ol, index,dis) {
             var length = ol.children.length;
             var height = ol.children[0].clientHeight;
+            var i=0;
 
             if(index === 1){
                 //移动图片
+                for(i=0;i<length;i++){
+                    ol.children[i].style[transformCSS] = "translateY("+height*i+"px) translateZ(0)";
+                }
                 ol.children[length-1].style[transformCSS] = "translateY("+(-height)+"px) translateZ(0)";
             }
             else if(index === length){
-                for(var i=0;i<length;i++){
+                for(i=0;i<length;i++){
                     ol.children[i].style[transformCSS] = "translateY("+height*i+"px) translateZ(0)";
                 }
             }
