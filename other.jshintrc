@@ -8,7 +8,7 @@
   "noarg": true,
   "sub": true,
   "undef": true,
-  "predef": [ "window","document"],
+  "predef": ["transformCSS","supportTransform","sliderProto","window"],
   "unused": true,
   "boss": true,
   "eqnull": true,

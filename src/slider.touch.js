@@ -1,8 +1,7 @@
-/**
- * 图片轮播库触屏版
- * @author alandlguo
- * @2014/04/23
- */
+ /**
+  * slider.js
+  * slider触屏模块，提供触屏的滑动功能
+  */
 
 /**
  * 绑定touch事件来处理触屏设备
@@ -16,8 +15,8 @@
  * ani.touchToSlide();
  */
 
-var Slider = Slider || {};
-Slider.prototype.touchToSlide = function() {
+
+sliderProto.touchToSlide = function() {
     var touchStart = false;
     var startPos = null;
     var self = this;
@@ -28,31 +27,6 @@ Slider.prototype.touchToSlide = function() {
     var i = 0;
     var arrangedOne = false,arrangedLast = false;
 
-    var createJudgeFunc = function(vendor) {
-        return function(){
-            var dummyStyle = document.createElement('div').style;
-            var v = vendor.prefix.split(','),
-                t,
-                i = 0,
-                l = v.length;
-
-            for (; i < l; i++) {
-                t = v[i] + vendor.words;
-                if (t in dummyStyle) {
-                    return v[i].substr(0, v[i].length - 1);
-                }
-            }
-
-            return false;
-        };
-    };
-    var transformJudgeFunc =  createJudgeFunc({
-        prefix:'t,-webkit-t,-moz-t,-ms-t,-o-t',
-        words:'ransform'
-    });
-
-    var transformCSS = self._prefixCSS("transform",transformJudgeFunc);
-    
     var moveImage = function() {
         var length,index,clientWidth,clientHeight;
         //滑动过程
@@ -73,50 +47,58 @@ Slider.prototype.touchToSlide = function() {
 
                     if (disX > 0) {
                         //重新排列图片，仅一次
+                        if(index === 1 && !self._config.loop){
+                            touchStart = false;
+                            return;
+                        }
                         if(index === 1){
                             //移动图片
                             if(!arrangedOne){
                                 for(i=0;i<length;i++){
-                                    self._ol.children[i].style[transformCSS] = "translateX("+clientWidth*i+"px) translateZ(0)";
+                                    self._ol.children[i].style[self.transformCSS] = "translateX("+clientWidth*i+"px) translateZ(0)";
                                 }
-                                self._ol.children[length-1].style[transformCSS] = "translateX("+(-clientWidth)+"px) translateZ(0)";
+                                self._ol.children[length-1].style[self.transformCSS] = "translateX("+(-clientWidth)+"px) translateZ(0)";
                                 arrangedOne = true;
                             }
                         }
                         else if(index === length){
                             if(!arrangedLast){
                                 for(i=0;i<length;i++){
-                                    self._ol.children[i].style[transformCSS] = "translateX("+clientWidth*i+"px) translateZ(0)";
+                                    self._ol.children[i].style[self.transformCSS] = "translateX("+clientWidth*i+"px) translateZ(0)";
                                 }
                                 arrangedLast = true;
                             }
                         }
 
                         //transform
-                        slideIn.style[transformCSS] = "translateX(" + parseInt(clientWidth*(1-self._index) + disX) + "px) translateZ(0)";
+                        slideIn.style[self.transformCSS] = "translateX(" + parseInt(clientWidth*(1-self._index) + disX) + "px) translateZ(0)";
 
                     } else if (disX < 0) {
+                        if(index === length && !self._config.loop){
+                            touchStart = false;
+                            return;
+                        }
                         //重新排列图片，仅一次
                         if(index === length){
                             if(!arrangedLast){
                                 //移动图片
                                 for(i=0;i<length;i++){
-                                    self._ol.children[i].style[transformCSS] = "translateX("+clientWidth*i+"px) translateZ(0)";
+                                    self._ol.children[i].style[self.transformCSS] = "translateX("+clientWidth*i+"px) translateZ(0)";
                                 }
-                                self._ol.children[0].style[transformCSS] = "translateX("+clientWidth*length+"px) translateZ(0)";
+                                self._ol.children[0].style[self.transformCSS] = "translateX("+clientWidth*length+"px) translateZ(0)";
                             }
                         }
                         else if(index === 1){
                             if(!arrangedOne){
                                 for(i=0;i<length;i++){
-                                    self._ol.children[i].style[transformCSS] = "translateX("+clientWidth*i+"px) translateZ(0)";
+                                    self._ol.children[i].style[self.transformCSS] = "translateX("+clientWidth*i+"px) translateZ(0)";
                                 }
                                 arrangedOne = true;
                             }
                         }
 
                         //transform
-                        slideIn.style[transformCSS] = "translateX(" + parseInt(clientWidth*(1-self._index) + disX) + "px) translateZ(0)";
+                        slideIn.style[self.transformCSS] = "translateX(" + parseInt(clientWidth*(1-self._index) + disX) + "px) translateZ(0)";
                     }
                 }
             } else if (self._config.mode === 2 || self._config.mode === 3) {
@@ -132,49 +114,57 @@ Slider.prototype.touchToSlide = function() {
                     index = self._index;
 
                     if (disY > 0) {
+                        if(index === 1 && !self._config.loop){
+                            touchStart = false;
+                            return;
+                        }
                         //重新排列图片，仅一次
                         if(index === 1){
                             //移动图片
                             if(!arrangedOne){
                                 for(i=0;i<length;i++){
-                                    self._ol.children[i].style[transformCSS] = "translateY("+clientHeight*i+"px) translateZ(0)";
+                                    self._ol.children[i].style[self.transformCSS] = "translateY("+clientHeight*i+"px) translateZ(0)";
                                 }
-                                self._ol.children[length-1].style[transformCSS] = "translateY("+(-clientHeight)+"px) translateZ(0)";
+                                self._ol.children[length-1].style[self.transformCSS] = "translateY("+(-clientHeight)+"px) translateZ(0)";
                                 arrangedOne = true;
                             }
                         }
                         else if(index === length){
                             if(!arrangedLast){
                                 for(i=0;i<length;i++){
-                                    self._ol.children[i].style[transformCSS] = "translateY("+clientHeight*i+"px) translateZ(0)";
+                                    self._ol.children[i].style[self.transformCSS] = "translateY("+clientHeight*i+"px) translateZ(0)";
                                 }
                                 arrangedLast = true;
                             }
                         }
 
-                        slideIn.style[transformCSS] = "translateY(" + parseInt(clientHeight*(1-self._index) + disY) + "px) translateZ(0)";
+                        slideIn.style[self.transformCSS] = "translateY(" + parseInt(clientHeight*(1-self._index) + disY) + "px) translateZ(0)";
                     } else if (disY < 0) {
+                        if(index === length && !self._config.loop){
+                            touchStart = false;
+                            return;
+                        }
                         //重新排列图片，仅一次
                         if(index === length){
                             if(!arrangedLast){
                                 //移动图片
                                 for(i=0;i<length;i++){
-                                    self._ol.children[i].style[transformCSS] = "translateY("+clientHeight*i+"px) translateZ(0)";
+                                    self._ol.children[i].style[self.transformCSS] = "translateY("+clientHeight*i+"px) translateZ(0)";
                                 }
-                                self._ol.children[0].style[transformCSS] = "translateY("+clientHeight*length+"px) translateZ(0)";
+                                self._ol.children[0].style[self.transformCSS] = "translateY("+clientHeight*length+"px) translateZ(0)";
                             }
                         }
                         else if(index === 1){
                             if(!arrangedOne){
                                 for(i=0;i<length;i++){
-                                    self._ol.children[i].style[transformCSS] = "translateY("+clientHeight*i+"px) translateZ(0)";
+                                    self._ol.children[i].style[self.transformCSS] = "translateY("+clientHeight*i+"px) translateZ(0)";
                                 }
                                 arrangedOne = true;
                             }
                         }
 
 
-                        slideIn.style[transformCSS] = "translateY(" + parseInt(clientHeight*(1-self._index) + disY) + "px) translateZ(0)";
+                        slideIn.style[self.transformCSS] = "translateY(" + parseInt(clientHeight*(1-self._index) + disY) + "px) translateZ(0)";
                     }
                 }
             }
@@ -258,11 +248,11 @@ Slider.prototype.touchToSlide = function() {
                     frameIn1 = {
                         point: 0
                     };
-                    frameIn1[transformCSS] = slideIn.style[transformCSS];
+                    frameIn1[self.transformCSS] = slideIn.style[self.transformCSS];
                     frameIn2 = {
                         point: self._config.duration * percent
                     };
-                    frameIn2[transformCSS] = frameIn2Trans;
+                    frameIn2[self.transformCSS] = frameIn2Trans;
 
                     return {
                         frameIn: [frameIn1, frameIn2]
@@ -274,7 +264,7 @@ Slider.prototype.touchToSlide = function() {
 
                 var frames,time;
 
-                if(!self._config.repeat){
+                if(!self._config.loop){
                     if(self._index >= self._lis.length){
                         canNext = false;
                     }
@@ -303,7 +293,7 @@ Slider.prototype.touchToSlide = function() {
                                 //动画结束
                                 self._index += 1;
                                 if (self._index > self._lis.length){
-                                    if(self._config.repeat){
+                                    if(self._config.loop){
                                         self._index = 1;
                                     }
                                     else{
@@ -352,7 +342,7 @@ Slider.prototype.touchToSlide = function() {
 
                                 self._index -= 1;
                                 if (self._index < 1){
-                                    if(self._config.repeat){
+                                    if(self._config.loop){
                                         self._index = self._lis.length;
                                     }else{
                                         self._index = 1;
@@ -406,7 +396,7 @@ Slider.prototype.touchToSlide = function() {
                                 //动画结束
                                 self._index += 1;
                                 if (self._index > self._lis.length){
-                                    if(self._config.repeat){
+                                    if(self._config.loop){
                                         self._index = 1;
                                     }
                                     else{
@@ -453,7 +443,7 @@ Slider.prototype.touchToSlide = function() {
                             time = setTimeout(function() {
                                 self._index -= 1;
                                 if (self._index < 1){
-                                    if(self._config.repeat){
+                                    if(self._config.loop){
                                         self._index = self._lis.length;
                                     }else{
                                         self._index = 1;
@@ -501,8 +491,6 @@ Slider.prototype.touchToSlide = function() {
     this._ol.addEventListener("touchstart", touchstart);
     this._ol.addEventListener("touchmove", touchmove);
     this._ol.addEventListener("touchend", touchend);
-
-
 
     return this;
 };

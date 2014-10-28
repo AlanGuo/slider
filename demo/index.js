@@ -63,8 +63,13 @@ sl_slider_ul.innerHTML = jstemplate(liTemplate, {
 var sl1 = new Slider(sl_slider_ul, {
     mode: 0,
     autoPlay: false,
-    timing: "ease"
-}).touchToSlide();
+    timing: "ease",
+    repeat: false
+});
+
+if(sl1.touchToSlide){
+    sl1.touchToSlide();
+}
 
 sl1.on("slideend", function(index) {
     var children = sl_slider_dot_ul_wrapper.children;
