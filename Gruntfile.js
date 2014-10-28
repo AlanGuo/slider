@@ -71,18 +71,10 @@ module.exports = function(grunt) {
         banner: "'use strict';\n"
       },
       pc: {
-        src: ['src/platform-pc.js'],
-        dest: 'dist/slider-pc-'+version+'.js'
-      },
-      pcAnimate: {
         src: ['lib/animate-1.1.js','src/platform-pc.js'],
         dest: 'dist/slider-pc-animate-'+version+'.js'
       },
       touch: {
-        src: ['src/platform-touch.js'],
-        dest: 'dist/slider-touch-'+version+'.js'
-      },
-      touchAnimate: {
         src: ['lib/animate-1.1.js','src/platform-touch.js'],
         dest: 'dist/slider-touch-animate-'+version+'.js'
       },
@@ -90,29 +82,19 @@ module.exports = function(grunt) {
         src: ['lib/animate-1.1.js','src/platform-all.js'],
         dest: 'dist/slider-animate-'+version+'.js'
       },
+      amdTouch: {
+        src: ['src/amd-touch.js'],
+        dest: 'dist/slider-touch-amd-'+version+'.js'
+      },
+      amdPC: {
+        src: ['src/amd-pc.js'],
+        dest: 'dist/slider-pc-amd-'+version+'.js'
+      },
       amdAll:{
         src: ['src/amd-all.js'],
-        dest: 'dist/slider-animate-amd-'+version+'.js'
+        dest: 'dist/slider-amd-'+version+'.js'
       }
     },
-    
-    // concat: {
-    //   dist: {
-    //     options: {
-    //       // Replace all 'use strict' statements in the code with a single one at the top
-    //       //banner: "'use strict';\n",
-    //       //process: function(src, filepath) {
-    //         //return '// Source: ' + filepath + '\n' +
-    //         //  src.replace(/(^|\n)[ \t]*('use strict'|"use strict");?\s*/g, '$1');
-    //       //},
-    //     },
-    //     files: {
-    //       'dist/slider-animate-1.0.js': 
-    //       ['lib/animate-1.1.js','src/slider.js','src/slider.touch.js'],
-    //       'dist/slider-1.0.js':['src/slider.js','src/slider.touch.js']
-    //     },
-    //   },
-    // },
 
     uglify: {
       target: {

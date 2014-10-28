@@ -42,7 +42,7 @@ var setOptions = function(options) {
     config.timingFunction = options.timingFunction || "linear";
     //是否循环播放
     config.loop = options.loop != null ? options.loop : true;
-    //切换下一帧时的触摸的offset
+    //切换下一图时的触摸的偏移offset
     config.nextSlideOffset = options.nextSlideOffset || 0.2;
     //透视之后缩放的比例，默认是一，
     //一般情况下透视之后图形会比原来要大，这里需要调整一下缩放，一般情况下此值为小于1的数如0.88

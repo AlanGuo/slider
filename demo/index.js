@@ -62,9 +62,9 @@ sl_slider_ul.innerHTML = jstemplate(liTemplate, {
 
 var sl1 = new Slider(sl_slider_ul, {
     mode: 0,
-    autoPlay: false,
+    autoPlay: true,
     timing: "ease",
-    repeat: false
+    loop: false
 });
 
 if(sl1.touchToSlide){
@@ -91,7 +91,7 @@ sl_mode_selectul.onclick = function(evt) {
     
     sl1.changeConfig({
         mode: mode,
-        autoPlay: false,
+        autoPlay: true,
         timing: "ease"
     });
 
