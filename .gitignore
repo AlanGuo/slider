@@ -12,6 +12,8 @@ sftp-config.json
 .metadata
 bin/
 tmp/
+backend/
+design/
 node_modules/
 *.tmp
 *.bak
