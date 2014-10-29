@@ -12,6 +12,7 @@ sftp-config.json
 .metadata
 bin/
 tmp/
+
 *.tmp
 *.bak
 *.swp
@@ -201,7 +202,6 @@ eggs/
 parts/
 var/
 sdist/
-node_modules/
 develop-eggs/
 .installed.cfg
 
