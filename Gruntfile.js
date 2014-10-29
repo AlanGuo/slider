@@ -93,6 +93,10 @@ module.exports = function(grunt) {
       amdAll:{
         src: ['src/amd-all.js'],
         dest: 'dist/slider-amd-'+version+'.js'
+      },
+      fordoc:{
+        src: ['lib/animate-1.1.js','src/platform-all.js'],
+        dest: 'dist/fordoc/slider-animate-'+version+'.js'
       }
     },
 

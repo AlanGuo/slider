@@ -196,12 +196,12 @@ $RECYCLE.BIN/
 # Packages
 *.egg
 *.egg-info
-dist/
 build/
 eggs/
 parts/
 var/
 sdist/
+node_modules/
 develop-eggs/
 .installed.cfg
 
