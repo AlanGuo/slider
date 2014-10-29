@@ -9,6 +9,7 @@
     "Gruntfile.js",
     "demo/",
     "lib/",
+    "dist/fordoc/"
     "README.md"
   ],
   "keywords": [
