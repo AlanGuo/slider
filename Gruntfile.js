@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = function(grunt) {
-  var version = '1.0.1';
+  //var version = '1.0.1';
   require('load-grunt-tasks')(grunt);
   // Project configuration.
   grunt.initConfig({
@@ -72,31 +72,35 @@ module.exports = function(grunt) {
       },
       pc: {
         src: ['lib/animate-1.1.js','src/platform-pc.js'],
-        dest: 'dist/slider-pc-animate-'+version+'.js'
+        dest: 'dist/slider-pc-animate.js'
       },
       touch: {
         src: ['lib/animate-1.1.js','src/platform-touch.js'],
-        dest: 'dist/slider-touch-animate-'+version+'.js'
+        dest: 'dist/slider-touch-animate.js'
+      },
+      slider:{
+        src: ['src/platform-all.js'],
+        dest: 'dist/slider.js'
       },
       allInOne:{
         src: ['lib/animate-1.1.js','src/platform-all.js'],
-        dest: 'dist/slider-animate-'+version+'.js'
+        dest: 'dist/slider-animate.js'
       },
       amdTouch: {
         src: ['src/amd-touch.js'],
-        dest: 'dist/slider-touch-amd-'+version+'.js'
+        dest: 'dist/slider-touch-amd.js'
       },
       amdPC: {
         src: ['src/amd-pc.js'],
-        dest: 'dist/slider-pc-amd-'+version+'.js'
+        dest: 'dist/slider-pc-amd.js'
       },
       amdAll:{
         src: ['src/amd-all.js'],
-        dest: 'dist/slider-amd-'+version+'.js'
+        dest: 'dist/slider-amd.js'
       },
       fordoc:{
         src: ['lib/animate-1.1.js','src/platform-all.js'],
-        dest: 'dist/fordoc/slider-animate-'+version+'.js'
+        dest: 'dist/fordoc/slider-animate.js'
       }
     },
 
