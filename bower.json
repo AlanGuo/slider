@@ -5,7 +5,10 @@
   "main": "slider-animate-1.0.1.js",
   "ignore": [
     "*.jshintrc",
-    "**/*.txt"
+    "**/*.txt",
+    "Gruntfile.js",
+    "demo/",
+    "lib/"
   ],
   "keywords": [
     "slide",
