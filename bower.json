@@ -8,7 +8,8 @@
     "**/*.txt",
     "Gruntfile.js",
     "demo/",
-    "lib/"
+    "lib/",
+    "README.md"
   ],
   "keywords": [
     "slide",
