@@ -42,7 +42,7 @@ var w = document.documentElement.clientWidth;
 var h = document.documentElement.clientHeight;
 
 //templates
-var liTemplate = /*<slider.demo.li>*/'<%for(var i=0;i<imgs.length;i++){%><li><img src="http://115.29.195.88:82/cgi-bin/picture?w=<%=size.w%>&h=<%=size.h%>&filename=<%=imgs[i]%>.jpg&max-age=2592000"></li><%}%>'/*</slider.demo.li>*/;
+var liTemplate = /*<slider.demo.li>*/'<%for(var i=0;i<imgs.length;i++){%><li><img src="http://58.96.185.53:82/cgi-bin/picture?w=<%=size.w%>&h=<%=size.h%>&filename=<%=imgs[i]%>.jpg&max-age=2592000"></li><%}%>'/*</slider.demo.li>*/;
 
 //随机四幅图
 var randomNum = [];
