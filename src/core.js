@@ -314,6 +314,162 @@ sliderProto.play = function() {
 };
 
 /**
+ * 上（1/n）个画面
+ * @method prev
+ * @param {number} dis 如果dis大于等于1则表示上dis个画面
+ * @return {Object} Slider
+ * @support ie:>=6,chrome:all,firefox:all,safari:all,opera:all
+ * @for Slider
+ * @example
+ * var sl = new Slider(elem);
+ * sl.prev();
+ */
+sliderProto.prev = function(dis) {
+
+    if (this._isSliding) {return this;}
+
+    dis = dis || 1;
+    var _self = this;
+    var mode = _oppositeMode[this._config.mode];
+    var func = _modeFunc[mode];
+    var slideIn = null, slideOut = null;
+
+    if(this._config.mode < 4){
+        slideIn = this._ol;
+        if(!this._config.loop  && this._index === 1){
+            slideIn = null;
+        }
+    }
+    else{
+        //从末尾取图片
+        slideIn = this._lis[this._lis.length - this._index + dis];
+        //从头开始
+        if(this._config.loop && this._index === 1){
+            slideIn = this._lis[0];
+        }
+
+        slideOut = this._lis[this._lis.length - this._index];
+
+        //动画在最前
+        slideIn.style.visibility = slideOut.style.visibility = "visible";
+        //其他的在后面
+        for(var i=0;i<this._lis.length;i++){
+            if(this._lis[i] !== slideIn && this._lis[i] !== slideOut){
+                this._lis[i].style.visibility = "hidden";
+            }
+        }
+    }
+    
+    if (slideIn) {
+        this._aniIn.setElement(slideIn);
+        //清空关键帧
+        this._aniIn.resetKeyFrames();
+        
+        if(slideOut){
+            this._aniOut.setElement(slideOut);
+            this._aniOut.resetKeyFrames();
+            func.call(this, slideIn, slideOut);
+            
+        }
+        else{
+            func.call(this, slideIn, this._index, dis);
+        }
+        this._aniIn.start({
+            timing: this._config.timing
+        });
+        this._aniOut.start({
+            timing: this._config.timing
+        });
+        
+        this._isSliding = true;
+        var time = setTimeout(function() {
+            _self._isSliding = false;
+
+            clearTimeout(time);
+
+            _self._aniIn.reset();
+            if(slideOut){
+                _self._aniOut.reset();
+            }
+
+            _self._index -= dis;
+            if (_self._index < 1){
+                _self._index = _self._lis.length;
+            }
+
+            if (_self._events.slideend) {
+                _self._events.slideend.forEach(function(func) {
+                    if (func) {func(_self._index, "prev");}
+                });
+            }
+        }, this._config.duration + 80);
+
+        if (_self._events.slidestart) {
+            _self._events.slidestart.forEach(function(func) {
+                if (func) {func(_self._index, "prev");}
+            });
+        }
+    }
+    return this;
+};
+
+/**
+ * 下（一/n）个画面
+ * @method next
+ * @param {number} dis 如果dis大于等于1则表示下dis个画面
+ * @return {Object} Slider
+ * @support ie:>=6,chrome:all,firefox:all,safari:all,opera:all
+ * @for Slider
+ * @example
+ * var sl = new Slider(elem);
+ * sl.next();
+ */
+sliderProto.next = function(dis) {
+    slide.call(this, dis);
+    return this;
+};
+
+
+/**
+ * 轮播至指定的画面
+ * @method slideTo
+ * @param {Number} index 从1开始
+ * @return {Object} Slider
+ * @support ie:>=6,chrome:all,firefox:all,safari:all,opera:all
+ * @for Slider
+ * @example
+ * var sl = new Slider(elem);
+ * sl.slideTo(2);
+ */
+sliderProto.slideTo = function(index) {
+    if (!this.isPaused) {
+        index = index * 1;
+
+        if (index > 0 && index <= this._lis.length) {
+            var dis = index - this._index;
+            this.pause();
+
+            if(dis > 0){
+                this.next(dis);
+            } else if (dis < 0) {
+                this.prev(-dis);
+            } else {
+                //点击自己，无动作
+                this.isPaused = false;
+                return this;
+            }
+        }
+
+        var _self = this;
+        var func = function() {
+            _self.play().off("slideend", func);
+        };
+        this.on("slideend", func);
+    }
+    return this;
+};
+
+/**
  * 是否支持transform
  * @property supportTransform
  * @for Slider
